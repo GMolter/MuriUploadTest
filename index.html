@@ -8,6 +8,10 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
+/* =========================================================
+   THEME (System Light/Dark + Muri Colors)
+   ========================================================= */
+
 :root {
   --bg: #f5f5fb;
   --bg-soft: #ffffff;
@@ -32,6 +36,9 @@
   }
 }
 
+/* =========================================================
+   GLOBAL
+   ========================================================= */
 * { box-sizing: border-box; }
 
 body {
@@ -47,14 +54,16 @@ body {
 h1 {
   font-size: 24px;
   font-weight: 700;
-  margin: 8px 0 4px;
+  margin: 8px 0 2px;
 }
-
 .subtitle {
   font-size: 13px;
   color: var(--muted);
 }
 
+/* =========================================================
+   CARDS
+   ========================================================= */
 .card {
   margin-top: 16px;
   padding: 16px;
@@ -63,9 +72,10 @@ h1 {
   border: 1px solid var(--border);
   backdrop-filter: blur(16px);
 }
+
 @media (prefers-color-scheme: dark) {
   .card {
-    background: rgba(15,23,42,0.8);
+    background: rgba(15,23,42,0.85);
   }
 }
 
@@ -81,6 +91,9 @@ input[type="file"] {
   font-size: 13px;
 }
 
+/* =========================================================
+   BUTTONS
+   ========================================================= */
 button {
   cursor: pointer;
   border: none;
@@ -88,7 +101,6 @@ button {
   font-family: inherit;
 }
 
-/* Primary button */
 .btn-primary {
   width: 100%;
   padding: 12px;
@@ -98,62 +110,64 @@ button {
   font-size: 15px;
   font-weight: 600;
   box-shadow: 0 10px 20px rgba(79,70,229,0.35);
-  transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.1s;
+  transition: 0.12s ease;
 }
 .btn-primary:active {
   transform: scale(0.97);
-  box-shadow: 0 4px 10px rgba(79,70,229,0.45);
   opacity: 0.9;
 }
 
-/* Video list */
-.video-item {
-  padding: 10px 12px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: rgba(148,163,184,0.06);
-  margin-top: 8px;
-}
-.video-title {
-  font-size: 14px;
-  font-weight: 500;
-}
-.video-meta {
-  font-size: 12px;
-  color: var(--muted);
-}
 .btn-ghost {
   padding: 7px 14px;
   border-radius: 999px;
-  background: rgba(99,102,241,0.08);
+  background: rgba(99,102,241,0.12);
   color: var(--accent);
   font-size: 13px;
   font-weight: 600;
 }
 
-/* MINI PLAYER */
+/* =========================================================
+   VIDEOS LIST
+   ========================================================= */
+.video-item {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(148,163,184,0.08);
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+}
+.video-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+.video-meta {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* =========================================================
+   MINI PLAYER
+   ========================================================= */
 .mini-player {
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 10px 16px 18px;
-  background: linear-gradient(to top, rgba(15,23,42,0.92), rgba(15,23,42,0.85));
-  color: #f9fafb;
+  left: 0; right: 0;
+  padding: 12px 18px;
+  background: rgba(15,23,42,0.92);
+  backdrop-filter: blur(10px);
   display: none;
   align-items: center;
   gap: 12px;
-  z-index: 20;
+  z-index: 50;
+  color: #fff;
 }
 
 .mini-art {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   border-radius: 12px;
   background: radial-gradient(circle at top left, var(--accent-strong), var(--accent));
-  flex-shrink: 0;
 }
 
 .mini-info {
@@ -163,110 +177,96 @@ button {
 .mini-title {
   font-size: 13px;
   font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
   text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 .mini-sub {
   font-size: 11px;
   color: #9ca3af;
 }
 
-.mini-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
 .icon-btn {
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
-  width: 32px;
-  height: 32px;
-  background: rgba(15,23,42,0.7);
+  background: rgba(255,255,255,0.12);
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #e5e7eb;
   font-size: 15px;
 }
 
-.icon-btn.primary {
-  background: #f97316;
-  color: #111827;
-}
-
-/* FULL PLAYER OVERLAY */
+/* =========================================================
+   FULL PLAYER
+   ========================================================= */
 .player-overlay {
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at top, rgba(249,115,22,0.45), transparent 55%),
-              radial-gradient(circle at bottom, rgba(129,140,248,0.35), transparent 55%),
+  padding: 16px;
+  background: radial-gradient(circle at top, rgba(249,115,22,0.35), transparent 55%),
+              radial-gradient(circle at bottom, rgba(129,140,248,0.25), transparent 55%),
               #020617;
   display: none;
   flex-direction: column;
-  padding: 16px;
-  z-index: 30;
-  color: #f9fafb;
+  z-index: 999;
+  color: #fff;
 }
 
 .player-header {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
 }
+
 .player-header-title {
   font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: rgba(209,213,219,0.9);
+  letter-spacing: 0.07em;
+  color: rgba(209,213,219,0.8);
 }
 
-/* VIDEO AREA */
+/* Video block */
 .video-wrapper {
   position: relative;
   border-radius: 16px;
   overflow: hidden;
-  background: #020617;
-  border: 1px solid rgba(148,163,184,0.4);
+  background: #0f172a;
+  border: 1px solid rgba(148,163,184,0.25);
 }
+
 .video-topbar {
   position: absolute;
   top: 6px;
-  right: 8px;
-  z-index: 2;
+  right: 6px;
   display: flex;
   gap: 6px;
+  z-index: 2;
 }
+
 .video-icon-btn {
   width: 26px;
   height: 26px;
   border-radius: 999px;
-  background: rgba(15,23,42,0.75);
+  background: rgba(0,0,0,0.45);
+  color: white;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
+  align-items:center;
+  justify-content:center;
+  font-size:14px;
 }
+
 .player-video {
   width: 100%;
   display: block;
 }
 
-/* META */
-.track-meta {
-  margin-top: 14px;
-}
-.track-title {
-  font-size: 17px;
-  font-weight: 700;
-}
-.track-artist {
-  font-size: 13px;
-  color: rgba(209,213,219,0.85);
-}
+/* Metadata */
+.track-meta { margin-top: 16px; }
+.track-title { font-size: 18px; font-weight: 700; }
+.track-artist { font-size: 13px; color: #cbd5e1; }
 
-/* MAIN CONTROLS */
+/* Controls */
 .player-controls {
   margin-top: 20px;
   display: flex;
@@ -285,126 +285,127 @@ button {
   width: 44px;
   height: 44px;
   border-radius: 999px;
-  background: rgba(15,23,42,0.6);
-  border: 1px solid rgba(148,163,184,0.5);
+  background: rgba(255,255,255,0.15);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items:center;
+  justify-content:center;
   font-size: 20px;
 }
 
 .play-pill {
-  width: 64px;
-  height: 64px;
+  width: 70px;
+  height: 70px;
   border-radius: 999px;
   background: radial-gradient(circle at center, #f97316, #ea580c);
-  box-shadow: 0 0 30px rgba(249,115,22,0.7);
+  box-shadow: 0 0 28px rgba(249,115,22,0.5);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  color: #111827;
+  align-items:center;
+  justify-content:center;
+  color: #111;
+  font-size: 26px;
 }
 
-/* SCRUBBER */
-.scrubber {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+/* Scrubber */
+.scrubber { display: flex; flex-direction: column; gap: 6px; }
 
 .scrub-track {
-  width: 100%;
-  height: 6px;
-  border-radius: 999px;
-  background: rgba(30,64,175,0.4);
-  overflow: hidden;
+  width:100%;
+  height:6px;
+  border-radius:999px;
+  background: rgba(30,64,175,0.3);
+  overflow:hidden;
+  cursor:pointer;
 }
 .scrub-fill {
-  height: 100%;
-  width: 0%;
+  height:100%;
+  width:0%;
   background: linear-gradient(to right, #f97316, #fb923c);
 }
 
 .time-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: rgba(209,213,219,0.8);
+  font-size:11px;
+  display:flex;
+  justify-content:space-between;
+  margin-top:4px;
 }
 
-/* TOAST */
+/* Toast */
 .toast {
   position: fixed;
   bottom: 80px;
   left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  background: rgba(15,23,42,0.96);
-  color: #e5e7eb;
-  padding: 10px 14px;
+  transform: translateX(-50%);
+  background: rgba(15,23,42,0.98);
+  color: #fff;
+  padding: 10px 16px;
   border-radius: 999px;
-  font-size: 12px;
   opacity: 0;
+  transition: 0.2s ease;
   pointer-events: none;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  z-index: 40;
+  z-index: 10000;
 }
-.toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
 </style>
 </head>
+
 <body>
 
 <header>
   <h1>Muri Player Test</h1>
-  <div class="subtitle">Supabase + Musi-style mini player & background audio</div>
+  <div class="subtitle">Supabase + Musi-style background audio</div>
 </header>
 
+<!-- =========================================================
+     UPLOAD
+     ========================================================= -->
 <section class="card">
-  <div class="section-title">Upload video</div>
+  <div class="section-title">Upload</div>
   <input type="file" id="fileInput" accept="video/*" />
   <button class="btn-primary" onclick="uploadVideo()">Upload</button>
   <p id="uploadStatus" style="font-size:12px;margin-top:6px;color:var(--muted);"></p>
 </section>
 
+<!-- =========================================================
+     VIDEO LIST
+     ========================================================= -->
 <section class="card">
   <div class="section-title">Videos</div>
   <div id="videoList"></div>
 </section>
 
-<!-- MINI PLAYER -->
+<!-- =========================================================
+     MINI PLAYER
+     ========================================================= -->
 <div class="mini-player" id="miniPlayer">
   <div class="mini-art"></div>
   <div class="mini-info" onclick="openFullPlayer()">
-    <div class="mini-title" id="miniTitle">No track</div>
-    <div class="mini-sub" id="miniSub">Tap to open player</div>
+    <div class="mini-title" id="miniTitle"></div>
+    <div class="mini-sub" id="miniSub"></div>
   </div>
-  <div class="mini-controls">
-    <button class="icon-btn" onclick="togglePlay(event)" id="miniPlayBtn">▶</button>
-    <button class="icon-btn" onclick="openFullPlayer()">⤢</button>
-  </div>
+  <button class="icon-btn" onclick="togglePlay(event)" id="miniPlayBtn">▶</button>
 </div>
 
-<!-- FULL PLAYER OVERLAY -->
+<!-- =========================================================
+     FULL PLAYER
+     ========================================================= -->
 <div class="player-overlay" id="fullPlayer">
+
   <div class="player-header">
     <button class="icon-btn" onclick="closeFullPlayer()">←</button>
     <div class="player-header-title">NOW PLAYING</div>
-    <div style="width:32px;"></div>
+    <div style="width:34px;"></div>
   </div>
 
   <div class="video-wrapper">
     <div class="video-topbar">
-      <button class="video-icon-btn" onclick="enterNativeFullscreen()" title="Fullscreen">⤢</button>
+      <button class="video-icon-btn" onclick="enterNativeFullscreen()">⤢</button>
     </div>
     <video id="video" class="player-video" muted playsinline webkit-playsinline></video>
   </div>
 
   <div class="track-meta">
-    <div class="track-title" id="fullTitle">No track selected</div>
-    <div class="track-artist" id="fullArtist">Uploaded via Supabase</div>
+    <div class="track-title" id="fullTitle"></div>
+    <div class="track-artist">From your Muri uploads</div>
   </div>
 
   <div class="player-controls">
@@ -415,9 +416,7 @@ button {
     </div>
 
     <div class="scrubber" onclick="scrub(event)">
-      <div class="scrub-track">
-        <div class="scrub-fill" id="scrubFill"></div>
-      </div>
+      <div class="scrub-track"><div class="scrub-fill" id="scrubFill"></div></div>
       <div class="time-row">
         <span id="timeCurrent">0:00</span>
         <span id="timeTotal">0:00</span>
@@ -426,207 +425,231 @@ button {
   </div>
 </div>
 
+<!-- AUDIO SOURCE -->
 <audio id="audio" playsinline></audio>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// === SUPABASE CONFIG ===
-const SUPABASE_URL = "https://azkthlaezuqiuidokqwy.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6a3RobGFlenVxaXVpZG9rcXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NzQ1NTMsImV4cCI6MjA4MDA1MDU1M30.-ddzglqIhff6UVujsQbgmpESTrHsXLww7AZ_fcEdLHg";
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+/* =========================================================
+   SUPABASE CONNECTION
+   ========================================================= */
+const db = supabase.createClient(
+  "https://azkthlaezuqiuidokqwy.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6a3RobGFlenVxaXVpZG9rcXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NzQ1NTMsImV4cCI6MjA4MDA1MDU1M30.-ddzglqIhff6UVujsQbgmpESTrHsXLww7AZ_fcEdLHg"
+);
 
-// === DOM ELEMENTS ===
+/* =========================================================
+   DOM REFERENCES
+   ========================================================= */
 const videoEl = document.getElementById("video");
 const audioEl = document.getElementById("audio");
+
 const miniPlayer = document.getElementById("miniPlayer");
-const fullPlayer = document.getElementById("fullPlayer");
 const miniTitle = document.getElementById("miniTitle");
 const miniSub = document.getElementById("miniSub");
+const miniPlayBtn = document.getElementById("miniPlayBtn");
+
+const fullPlayer = document.getElementById("fullPlayer");
 const fullTitle = document.getElementById("fullTitle");
+const fullPlayBtn = document.getElementById("fullPlayBtn");
+
 const scrubFill = document.getElementById("scrubFill");
 const timeCurrent = document.getElementById("timeCurrent");
 const timeTotal = document.getElementById("timeTotal");
-const miniPlayBtn = document.getElementById("miniPlayBtn");
-const fullPlayBtn = document.getElementById("fullPlayBtn");
-const toastEl = document.getElementById("toast");
 
 let currentTrack = null;
-let progressTimer = null;
 
-// === TOAST ===
-function toast(msg) {
-  toastEl.textContent = msg;
-  toastEl.classList.add("show");
-  setTimeout(() => toastEl.classList.remove("show"), 2200);
+/* =========================================================
+   SMALL HELPERS
+   ========================================================= */
+function stripExt(name) {
+  return name.replace(/\.[^/.]+$/, "");
 }
-
-// === FORMAT TIME ===
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2000);
+}
 function formatTime(sec) {
   if (!sec || isNaN(sec)) return "0:00";
-  const s = Math.floor(sec);
-  const m = Math.floor(s / 60);
-  const r = s % 60;
-  return `${m}:${r.toString().padStart(2, "0")}`;
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
-// === LOAD LIST ===
+/* =========================================================
+   AUTO REFRESH VIDEO LIST
+   ========================================================= */
 async function listVideos() {
   const { data, error } = await db
     .from("videos")
-    .select("*")
+    .select("*", { head: false })
     .order("created_at", { ascending: false });
+
   if (error) {
-    toast("Error loading videos");
+    toast("Failed to load videos");
     return;
   }
 
   const list = document.getElementById("videoList");
   list.innerHTML = "";
-  if (!data || !data.length) {
-    list.innerHTML = `<div style="font-size:13px;color:var(--muted);">No videos yet. Upload one above.</div>`;
+
+  if (!data || data.length === 0) {
+    list.innerHTML = `<div style="font-size:13px;color:var(--muted);">Nothing uploaded yet</div>`;
     return;
   }
 
-  data.forEach(row => {
-    const item = document.createElement("div");
-    item.className = "video-item";
-    item.innerHTML = `
+  data.forEach(v => {
+    const el = document.createElement("div");
+    el.className = "video-item";
+    el.innerHTML = `
       <div>
-        <div class="video-title">${row.title}</div>
-        <div class="video-meta">${new Date(row.created_at).toLocaleString()}</div>
+        <div class="video-title">${stripExt(v.title)}</div>
+        <div class="video-meta">${new Date(v.created_at).toLocaleString()}</div>
       </div>
       <button class="btn-ghost">Play</button>
     `;
-    item.querySelector("button").onclick = () => startTrack(row);
-    list.appendChild(item);
+    el.querySelector("button").onclick = () => startTrack(v);
+    list.appendChild(el);
   });
 }
+
+// Refresh every 5 seconds
+setInterval(listVideos, 5000);
 listVideos();
 
-// === START PLAYBACK ===
+/* =========================================================
+   START TRACK (PLAY)
+   ========================================================= */
 async function startTrack(row) {
   currentTrack = row;
-  miniTitle.textContent = row.title;
-  miniSub.textContent = "Playing from Supabase library";
-  fullTitle.textContent = row.title;
 
+  // Mini player info
+  miniTitle.textContent = stripExt(row.title);
+  miniSub.textContent = "Playing from uploads";
+
+  // Audio
   audioEl.src = row.file_url;
-  videoEl.src = row.file_url; // muted visual only
-  videoEl.currentTime = 0;
   audioEl.currentTime = 0;
+  await audioEl.play();
 
-  try {
-    await audioEl.play();
-    videoEl.play().catch(() => {}); // video is muted, safe to ignore
-  } catch (e) {
-    toast("Tap again to allow playback");
-    return;
-  }
+  // Video
+  videoEl.src = row.file_url;
+  videoEl.currentTime = 0;
+  videoEl.play().catch(() => {});
 
+  // Full player info
+  fullTitle.textContent = stripExt(row.title);
+
+  // Show mini player
   miniPlayer.style.display = "flex";
-  setPlayingUI(true);
+  setPlayState(true);
 
-  // Media Session (lock screen)
   if ("mediaSession" in navigator) {
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: row.title,
+      title: stripExt(row.title),
       artist: "Muri Upload Test",
       album: "Muri",
-      artwork: [
-        { src: row.file_url, sizes: "512x512", type: "image/png" }
-      ]
+      artwork: [{ src: row.file_url, sizes: "512x512", type: "image/png" }]
     });
   }
-
-  startProgressLoop();
 }
 
-// === PLAY/PAUSE ===
-function setPlayingUI(playing) {
+/* =========================================================
+   PLAY/PAUSE
+   ========================================================= */
+function setPlayState(playing) {
   miniPlayBtn.textContent = playing ? "⏸" : "▶";
   fullPlayBtn.textContent = playing ? "⏸" : "▶";
 }
 
-function togglePlay(ev) {
-  if (ev) ev.stopPropagation();
-  if (!currentTrack) return;
+function togglePlay(e) {
+  if (e) e.stopPropagation();
 
   if (audioEl.paused) {
     audioEl.play();
     videoEl.play().catch(() => {});
-    setPlayingUI(true);
+    setPlayState(true);
   } else {
     audioEl.pause();
     videoEl.pause();
-    setPlayingUI(false);
+    setPlayState(false);
   }
 }
 
-// === SEEK ===
-function seekRelative(delta) {
-  if (!currentTrack || !audioEl.duration) return;
-  let t = audioEl.currentTime + delta;
-  t = Math.max(0, Math.min(t, audioEl.duration));
+/* =========================================================
+   SEEK
+   ========================================================= */
+function seekRelative(sec) {
+  if (!audioEl.duration) return;
+  const t = Math.max(0, Math.min(audioEl.currentTime + sec, audioEl.duration));
   audioEl.currentTime = t;
   videoEl.currentTime = t;
 }
 
 function scrub(e) {
-  if (!currentTrack || !audioEl.duration) return;
   const bar = e.currentTarget.querySelector(".scrub-track");
   const rect = bar.getBoundingClientRect();
   const percent = (e.clientX - rect.left) / rect.width;
-  const t = Math.max(0, Math.min(percent, 1)) * audioEl.duration;
+  const t = percent * audioEl.duration;
   audioEl.currentTime = t;
   videoEl.currentTime = t;
 }
 
-// === PROGRESS LOOP ===
-function startProgressLoop() {
-  if (progressTimer) clearInterval(progressTimer);
-  progressTimer = setInterval(() => {
-    if (!audioEl.duration) return;
-    const p = (audioEl.currentTime / audioEl.duration) * 100;
-    scrubFill.style.width = `${p}%`;
-    timeCurrent.textContent = formatTime(audioEl.currentTime);
-    timeTotal.textContent = formatTime(audioEl.duration);
+/* =========================================================
+   SMOOTH SYNC (NO LAG)
+   ========================================================= */
+function syncLoop() {
+  if (!audioEl.paused) {
     videoEl.currentTime = audioEl.currentTime;
-  }, 250);
-}
 
-// === FULL PLAYER ===
+    // progress bar
+    if (audioEl.duration) {
+      const pct = (audioEl.currentTime / audioEl.duration) * 100;
+      scrubFill.style.width = pct + "%";
+      timeCurrent.textContent = formatTime(audioEl.currentTime);
+      timeTotal.textContent = formatTime(audioEl.duration);
+    }
+  }
+  requestAnimationFrame(syncLoop);
+}
+syncLoop();
+
+/* =========================================================
+   FULL PLAYER OPEN/CLOSE
+   ========================================================= */
 function openFullPlayer() {
   if (!currentTrack) return;
   fullPlayer.style.display = "flex";
-  videoEl.play().catch(() => {});
 }
 function closeFullPlayer() {
   fullPlayer.style.display = "none";
-  videoEl.pause(); // audio keeps going
+  videoEl.pause();
 }
 
-// optional native fullscreen if available
 function enterNativeFullscreen() {
   if (videoEl.requestFullscreen) videoEl.requestFullscreen();
 }
 
-// === UPLOAD ===
+/* =========================================================
+   UPLOAD
+   ========================================================= */
 async function uploadVideo() {
   const file = document.getElementById("fileInput").files[0];
   if (!file) {
-    toast("No file selected");
+    toast("Select a file");
     return;
   }
 
   const ext = file.name.split(".").pop();
-  const fileName = `${crypto.randomUUID()}.${ext}`;
+  const fileName = crypto.randomUUID() + "." + ext;
 
   document.getElementById("uploadStatus").textContent = "Uploading...";
 
   const { error: upErr } = await db.storage.from("Storage").upload(fileName, file);
   if (upErr) {
-    console.error(upErr);
     toast("Upload failed");
     document.getElementById("uploadStatus").textContent = "";
     return;
@@ -634,26 +657,17 @@ async function uploadVideo() {
 
   const { data: pub } = db.storage.from("Storage").getPublicUrl(fileName);
 
-  const { error: insErr } = await db.from("videos").insert({
+  await db.from("videos").insert({
     title: file.name,
     file_path: fileName,
-    file_url: pub.publicUrl,
-    source_url: "",
-    uploaded_by: null
+    file_url: pub.publicUrl
   });
 
-  if (insErr) {
-    console.error(insErr);
-    toast("DB insert failed");
-    document.getElementById("uploadStatus").textContent = "";
-    return;
-  }
-
-  document.getElementById("uploadStatus").textContent = "Uploaded!";
-  toast("Upload complete");
+  toast("Uploaded!");
+  document.getElementById("uploadStatus").textContent = "";
   listVideos();
 }
-
 </script>
+
 </body>
 </html>
