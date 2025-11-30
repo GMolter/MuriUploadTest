@@ -11,7 +11,234 @@
         max-width: 700px;
         margin: auto;
         color: #333;
+    }<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Muri Backend Test</title>
+<style>
+    body {
+        background: #f5f5f7;
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        max-width: 700px;
+        margin: auto;
+        color: #333;
     }
+    h1, h2 {
+        margin-top: 30px;
+        color: #222;
+    }
+    input, button {
+        padding: 10px;
+        margin: 6px 0;
+        width: 100%;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+    }
+    button {
+        background: #6366f1;
+        color: white;
+        cursor: pointer;
+        border: none;
+    }
+    button:hover {
+        background: #4f46e5;
+    }
+    #videoList div {
+        padding: 10px;
+        background: #fff;
+        border-radius: 8px;
+        margin-top: 10px;
+        border: 1px solid #ddd;
+    }
+</style>
+</head>
+<body>
+
+<h1>Muri Backend Test</h1>
+<p>This page lets you test Supabase Auth, video uploads, table inserts, and playback.</p>
+
+<hr>
+
+<!-- AUTH SECTION -->
+<h2>Login / Signup</h2>
+
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+
+<button onclick="signup()">Sign Up</button>
+<button onclick="login()">Log In</button>
+<button onclick="logout()">Log Out</button>
+
+<p id="authStatus">Checking...</p>
+
+<hr>
+
+<!-- UPLOAD SECTION -->
+<h2>Upload Video</h2>
+<input type="file" id="fileInput" accept="video/*">
+<button onclick="uploadVideo()">Upload</button>
+
+<p id="uploadStatus"></p>
+
+<hr>
+
+<!-- VIDEO LIST -->
+<h2>Uploaded Videos</h2>
+<div id="videoList"></div>
+
+<!-- PLAYER -->
+<h2>Player</h2>
+<video id="player" width="100%" controls></video>
+
+<!-- SUPABASE CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+// -----------------------------------------
+// 1. CONFIG — your real Supabase credentials
+// -----------------------------------------
+const SUPABASE_URL = "https://azkthlaezuqiuidokqwy.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6a3RobGFlenVxaXVpZG9rcXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NzQ1NTMsImV4cCI6MjA4MDA1MDU1M30.-ddzglqIhff6UVujsQbgmpESTrHsXLww7AZ_fcEdLHg";
+
+// FIX: rename "supabase" → "db"
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// -----------------------------------------
+// 2. AUTHENTICATION
+// -----------------------------------------
+async function signup() {
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    const { error } = await db.auth.signUp({ email, password });
+    if (error) alert(error.message);
+    else alert("Signup successful!");
+}
+
+async function login() {
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    const { error } = await db.auth.signInWithPassword({ email, password });
+    if (error) alert(error.message);
+    else alert("Login successful!");
+    updateAuthStatus();
+}
+
+async function logout() {
+    await db.auth.signOut();
+    updateAuthStatus();
+}
+
+async function updateAuthStatus() {
+    const { data } = await db.auth.getUser();
+    document.getElementById("authStatus").innerText =
+        data.user ? `Logged in as: ${data.user.email}` : "Not logged in";
+}
+updateAuthStatus();
+
+// -----------------------------------------
+// 3. UPLOAD VIDEO TO SUPABASE STORAGE
+// -----------------------------------------
+async function uploadVideo() {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) {
+        alert("No file selected.");
+        return;
+    }
+
+    // Try to detect logged-in user
+    const { data } = await db.auth.getUser();
+    const user = data.user;
+    const uploaded_by = user ? user.id : null;
+
+    // Make unique filename
+    const ext = file.name.split(".").pop();
+    const fileName = `${crypto.randomUUID()}.${ext}`;
+
+    // Upload to your bucket "Storage"
+    const { error: uploadError } = await db.storage
+        .from("Storage")
+        .upload(fileName, file);
+
+    if (uploadError) {
+        alert("Upload failed!");
+        console.log(uploadError);
+        return;
+    }
+
+    // Public URL
+    const { data: pub } = db.storage.from("Storage").getPublicUrl(fileName);
+
+    const file_url = pub.publicUrl;
+
+    // Insert video metadata into the videos table
+    const { error: insertError } = await db
+        .from("videos")
+        .insert([
+            {
+                title: file.name,
+                file_path: fileName,
+                file_url,
+                source_url: "",
+                uploaded_by,
+            }
+        ]);
+
+    if (insertError) {
+        alert("Database insert failed!");
+        console.log(insertError);
+        return;
+    }
+
+    document.getElementById("uploadStatus").innerText = "Upload successful!";
+    listVideos(); // refresh list
+}
+
+// -----------------------------------------
+// 4. FETCH AND DISPLAY VIDEOS
+// -----------------------------------------
+async function listVideos() {
+    const { data, error } = await db
+        .from("videos")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        alert("Error fetching videos.");
+        return;
+    }
+
+    const list = document.getElementById("videoList");
+    list.innerHTML = "";
+
+    data.forEach(video => {
+        const div = document.createElement("div");
+        div.innerHTML = `
+            <strong>${video.title}</strong><br>
+            <button onclick="playVideo('${video.file_url}')">Play</button>
+        `;
+        list.appendChild(div);
+    });
+}
+listVideos();
+
+// -----------------------------------------
+// 5. PLAY VIDEO
+// -----------------------------------------
+function playVideo(url) {
+    const player = document.getElementById("player");
+    player.src = url;
+    player.play();
+}
+
+</script>
+</body>
+</html>
+
     h1, h2 {
         margin-top: 30px;
         color: #222;
