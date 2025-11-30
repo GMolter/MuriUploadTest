@@ -9,28 +9,31 @@
 
 <style>
 :root {
-  --bg: #050816;
-  --bg-soft: #050816;
-  --fg: #e5e7eb;
+  --bg: #050316;
+  --bg-soft: #120725;
+  --fg: #f9fafb;
+  --muted: #a5b4fc;
+  --card: rgba(15,23,42,0.96);
+  --card-soft: rgba(15,23,42,0.9);
+  --border: rgba(148,163,184,0.35);
   --accent: #6366f1;
   --accent-strong: #a855f7;
-  --accent-warm: #fb923c;
-  --border: rgba(148,163,184,0.22);
-  --muted: #9ca3af;
-  --card: rgba(15,23,42,0.9);
+  --accent-soft: rgba(129,140,248,0.35);
+  --accent-hot: #f97316; /* only for subtle glow if needed */
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    --bg: #f4f4fb;
-    --bg-soft: #ffffff;
+    --bg: #f5f3ff;
+    --bg-soft: #ede9fe;
     --fg: #020617;
-    --accent: #6366f1;
-    --accent-strong: #a855f7;
-    --accent-warm: #fb923c;
-    --border: rgba(148,163,184,0.3);
     --muted: #6b7280;
     --card: rgba(255,255,255,0.98);
+    --card-soft: rgba(255,255,255,0.96);
+    --border: rgba(148,163,184,0.4);
+    --accent: #6366f1;
+    --accent-strong: #a855f7;
+    --accent-soft: rgba(129,140,248,0.4);
   }
 }
 
@@ -38,262 +41,351 @@
 
 body {
   margin: 0;
-  padding: 18px 14px 96px;
+  padding: 18px 12px 96px;
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background:
-    radial-gradient(circle at top left, rgba(129,140,248,0.25), transparent 55%),
-    radial-gradient(circle at bottom right, rgba(236,72,153,0.25), transparent 55%),
+    radial-gradient(circle at top left, rgba(236,72,153,0.35), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(79,70,229,0.45), transparent 55%),
     var(--bg);
   color: var(--fg);
 }
 
 main {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 0 auto;
 }
 
 /* HEADER */
-header { margin-bottom: 10px; }
+.header-row {
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+.header-left {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.app-icon {
+  width:36px;
+  height:36px;
+  border-radius:12px;
+  background: radial-gradient(circle at top, #f97316, #ec4899, #6366f1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 12px 30px rgba(129,140,248,0.6);
+}
+.app-icon svg { width:20px;height:20px;fill:#f9fafb; }
 h1 {
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  margin: 4px 0 2px;
+  margin:0;
+  font-size:26px;
+  font-weight:700;
+  letter-spacing:-0.03em;
 }
 .subtitle {
-  font-size: 13px;
-  color: var(--muted);
+  font-size:13px;
+  color:var(--muted);
 }
 
-/* CARD / PANEL */
-.card {
-  margin-top: 14px;
-  padding: 14px 14px 16px;
-  border-radius: 18px;
-  background: var(--card);
-  border: 1px solid var(--border);
-  box-shadow: 0 12px 30px rgba(15,23,42,0.35);
-  backdrop-filter: blur(16px);
+/* TOP LAYOUT: UPLOAD + STATS */
+.top-grid {
+  display:grid;
+  grid-template-columns: minmax(0,2.2fr) minmax(0,1.1fr);
+  gap:16px;
+  margin-bottom:20px;
 }
-.section-title {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-/* UPLOAD */
-.upload-row {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-@media (min-width: 640px) {
-  .upload-row {
-    flex-direction: row;
-    align-items: center;
+@media (max-width: 800px) {
+  .top-grid {
+    grid-template-columns: minmax(0,1fr);
   }
 }
-input[type="file"] {
-  flex: 1;
-  max-width: 100%;
-  font-size: 13px;
-  color: var(--muted);
+
+.card {
+  border-radius:24px;
+  background:var(--card);
+  border:1px solid var(--border);
+  box-shadow:0 20px 45px rgba(15,23,42,0.7);
+  padding:18px 18px 20px;
 }
 
-/* BUTTONS */
-button {
-  cursor: pointer;
-  border: none;
-  outline: none;
-  font-family: inherit;
+/* UPLOAD DROPZONE */
+.dropzone {
+  position:relative;
+  border-radius:24px;
+  padding:30px 18px 22px;
+  background:
+    radial-gradient(circle at top, rgba(236,72,153,0.35), transparent 60%),
+    radial-gradient(circle at bottom, rgba(79,70,229,0.45), transparent 60%),
+    #020617;
+  border:1px solid rgba(148,163,184,0.32);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
 }
+.drop-icon {
+  width:64px;height:64px;
+  border-radius:24px;
+  background: radial-gradient(circle at top, #a855f7, #6366f1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:12px;
+  box-shadow:0 18px 35px rgba(129,140,248,0.8);
+}
+.drop-icon svg { width:28px;height:28px;fill:#f9fafb; }
+.drop-title { font-size:16px;font-weight:600;margin-bottom:4px; }
+.drop-sub { font-size:13px;color:var(--muted);margin-bottom:18px; }
 
 .btn-primary {
-  padding: 11px 18px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
-  color: #f9fafb;
-  font-size: 14px;
-  font-weight: 600;
-  box-shadow: 0 10px 25px rgba(79,70,229,0.55);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+  padding:10px 20px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#6366f1,#a855f7);
+  border:none;
+  color:#f9fafb;
+  font-size:14px;
+  font-weight:600;
+  box-shadow:0 10px 24px rgba(79,70,229,0.75);
+  cursor:pointer;
+  transition:transform 0.12s ease,box-shadow 0.12s ease,opacity 0.12s ease;
 }
 .btn-primary:active {
-  transform: scale(0.96);
-  opacity: 0.95;
-  box-shadow: 0 6px 16px rgba(79,70,229,0.7);
+  transform:scale(0.96);
+  opacity:0.95;
+  box-shadow:0 6px 16px rgba(79,70,229,0.85);
+}
+.dropzone.dragover {
+  outline:2px dashed rgba(196,181,253,0.7);
+  outline-offset:6px;
 }
 
-.btn-ghost {
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(148,163,253,0.16);
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 500;
+/* STATS */
+.stats-title {
+  font-size:16px;
+  font-weight:600;
+  margin-bottom:10px;
+}
+.stats-col {
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+.stat-card {
+  border-radius:18px;
+  padding:14px 16px;
+  background:var(--card-soft);
+  border:1px solid rgba(148,163,184,0.35);
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+}
+.stat-label {
+  font-size:13px;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:6px;
+}
+.stat-label svg { width:14px;height:14px;fill:var(--accent-soft); }
+.stat-value {
+  font-size:22px;
+  font-weight:700;
+}
+.stat-foot {
+  font-size:12px;
+  color:var(--muted);
 }
 
-/* VIDEO LIST */
-.video-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* SECTION HEADERS */
+.section-heading {
+  font-size:20px;
+  font-weight:700;
+  margin:6px 2px 10px;
 }
-.video-item {
-  padding: 10px 10px;
-  border-radius: 13px;
-  background: radial-gradient(circle at top left, rgba(148,163,253,0.12), transparent 55%), rgba(15,23,42,0.95);
-  display: flex;
-  align-items: center;
-  gap: 10px;
+
+/* VIDEO GRID */
+.video-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+  gap:16px;
+  margin-bottom:40px;
 }
-.thumb {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: conic-gradient(from 180deg, var(--accent), var(--accent-strong), var(--accent-warm), var(--accent));
-  flex-shrink: 0;
+.video-card {
+  border-radius:24px;
+  background:var(--card);
+  border:1px solid rgba(148,163,184,0.5);
+  box-shadow:0 16px 40px rgba(15,23,42,0.9);
+  padding:12px 12px 14px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
 }
-.video-meta-wrapper { flex: 1; min-width: 0; }
+.video-thumb {
+  border-radius:20px;
+  height:210px;
+  background:linear-gradient(135deg,#ec4899,#6366f1);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.video-thumb.blue {
+  background:linear-gradient(135deg,#6366f1,#22c1c3);
+}
+.video-thumb svg { width:40px;height:40px;fill:rgba(248,250,252,0.9); }
+.video-info {
+  padding:4px 2px 2px;
+}
 .video-title {
-  font-size: 14px;
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size:14px;
+  font-weight:600;
 }
-.video-meta {
-  font-size: 11px;
-  color: var(--muted);
+.video-artist {
+  font-size:12px;
+  color:var(--muted);
 }
+.video-date {
+  font-size:11px;
+  color:var(--muted);
+  margin-top:2px;
+}
+.video-playbar {
+  margin-top:6px;
+  border-radius:999px;
+  background:linear-gradient(90deg,#6366f1,#a855f7);
+  padding:7px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+}
+.video-playbar span {
+  font-size:13px;
+  font-weight:600;
+  color:#f9fafb;
+}
+.video-playbar svg { width:14px;height:14px;fill:#f9fafb; }
 
 /* MINI PLAYER */
 .mini-player {
-  position: fixed;
-  left: 0; right: 0; bottom: 0;
-  padding: 10px 14px 14px;
-  background: linear-gradient(to top, rgba(15,23,42,0.96), rgba(15,23,42,0.92));
-  backdrop-filter: blur(12px);
-  display: none;
-  align-items: center;
-  gap: 10px;
-  z-index: 40;
-  border-top: 1px solid rgba(148,163,184,0.3);
+  position:fixed;
+  left:0;right:0;bottom:0;
+  padding:10px 14px 14px;
+  background:linear-gradient(to top,rgba(15,23,42,0.98),rgba(15,23,42,0.94));
+  border-top:1px solid rgba(148,163,184,0.4);
+  backdrop-filter:blur(14px);
+  display:none;
+  align-items:center;
+  gap:10px;
+  z-index:40;
 }
 .mini-art {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: conic-gradient(from 0deg, var(--accent-strong), var(--accent), var(--accent-warm), var(--accent-strong));
-  flex-shrink: 0;
+  width:40px;height:40px;
+  border-radius:14px;
+  background:conic-gradient(from 0deg,#ec4899,#6366f1,#a855f7,#ec4899);
 }
-.mini-info { flex: 1; min-width: 0; }
+.mini-info { flex:1;min-width:0;cursor:pointer; }
 .mini-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #e5e7eb;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size:13px;
+  font-weight:600;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 .mini-sub {
-  font-size: 11px;
-  color: #9ca3af;
+  font-size:11px;
+  color:#9ca3af;
 }
 .mini-controls {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display:flex;
+  align-items:center;
+  gap:6px;
 }
 .icon-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  background: rgba(15,23,42,0.9);
+  width:32px;height:32px;
+  border-radius:999px;
+  background:rgba(15,23,42,0.95);
   display:flex;
   align-items:center;
   justify-content:center;
 }
-.icon-btn svg { width: 14px; height:14px; fill:#e5e7eb; }
-.icon-btn.loading { opacity:0.5; pointer-events:none; }
+.icon-btn svg { width:14px;height:14px;fill:#e5e7eb; }
+.icon-btn.loading { opacity:0.6;pointer-events:none; }
 
 /* FULL PLAYER */
 .player-overlay {
-  position: fixed;
-  inset: 0;
-  display: none;
-  flex-direction: column;
-  padding: 16px 14px 18px;
+  position:fixed;
+  inset:0;
+  display:none;
+  flex-direction:column;
+  padding:18px 14px 18px;
   background:
-    radial-gradient(circle at top, rgba(129,140,248,0.25), transparent 55%),
-    radial-gradient(circle at bottom, rgba(236,72,153,0.3), transparent 55%),
+    radial-gradient(circle at top,rgba(236,72,153,0.4),transparent 55%),
+    radial-gradient(circle at bottom,rgba(79,70,229,0.5),transparent 60%),
     #020617;
-  color: #f9fafb;
-  z-index: 50;
+  color:#f9fafb;
+  z-index:50;
 }
-
 .player-header {
   display:flex;
-  justify-content:space-between;
   align-items:center;
-  margin-bottom:10px;
-}
-.player-header-title {
-  font-size: 13px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(209,213,219,0.85);
+  justify-content:space-between;
+  margin-bottom:12px;
 }
 .player-back {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  background: rgba(15,23,42,0.7);
+  width:32px;height:32px;
+  border-radius:999px;
+  background:rgba(15,23,42,0.8);
   display:flex;
   align-items:center;
   justify-content:center;
 }
-.player-back svg { width:16px;height:16px;fill:#e5e7eb; }
-
-/* Video card */
-.video-wrapper {
-  border-radius: 18px;
-  overflow: hidden;
-  background: #020617;
-  border: 1px solid rgba(148,163,184,0.42);
-  position: relative;
-  box-shadow: 0 18px 40px rgba(15,23,42,0.9);
+.player-back svg { width:16px;height:16px;fill:#f9fafb; }
+.player-header-title {
+  font-size:13px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:rgba(209,213,219,0.9);
 }
-.player-video { width: 100%; display:block; }
+
+/* video in full player */
+.video-wrapper {
+  border-radius:22px;
+  overflow:hidden;
+  background:#020617;
+  border:1px solid rgba(148,163,184,0.6);
+  box-shadow:0 22px 45px rgba(15,23,42,0.95);
+  position:relative;
+}
+.player-video { width:100%;display:block; }
 .video-topbar {
   position:absolute;
-  right:8px; top:8px;
+  right:8px;top:8px;
   display:flex;
   gap:6px;
-  z-index:2;
 }
 .video-icon-btn {
-  width: 26px;
-  height: 26px;
-  border-radius: 999px;
-  background: rgba(15,23,42,0.85);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width:26px;height:26px;
+  border-radius:999px;
+  background:rgba(15,23,42,0.85);
+  display:flex;align-items:center;justify-content:center;
 }
-.video-icon-btn svg { width:14px;height:14px;fill:#e5e7eb; }
+.video-icon-btn svg { width:14px;height:14px;fill:#f9fafb; }
 
-/* Metadata */
-.track-meta { margin-top:16px; }
+/* meta + controls */
+.track-meta { margin-top:14px; }
 .track-title { font-size:18px;font-weight:700; }
 .track-artist { font-size:13px;color:rgba(209,213,219,0.9); }
 
-/* Controls */
 .player-controls {
-  margin-top: 20px;
+  margin-top:18px;
   display:flex;
   flex-direction:column;
-  gap:16px;
+  gap:12px;
 }
 .primary-controls {
   display:flex;
@@ -302,52 +394,27 @@ button {
   gap:26px;
 }
 .round-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 999px;
-  background: rgba(15,23,42,0.9);
-  border: 1px solid rgba(148,163,184,0.6);
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width:44px;height:44px;
+  border-radius:999px;
+  background:rgba(15,23,42,0.9);
+  border:1px solid rgba(148,163,184,0.7);
+  display:flex;align-items:center;justify-content:center;
 }
-.round-icon svg { width:18px;height:18px;fill:#e5e7eb; }
+.round-icon svg { width:18px;height:18px;fill:#f9fafb; }
 
-/* Play pill – Muri gradients */
 .play-pill {
-  width: 70px;
-  height: 70px;
-  border-radius: 999px;
-  background: radial-gradient(circle at top, var(--accent-strong), var(--accent));
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  box-shadow: 0 0 36px rgba(129,140,248,0.8);
-  border: 2px solid rgba(239,246,255,0.2);
+  width:72px;height:72px;
+  border-radius:999px;
+  background:radial-gradient(circle at top,#a855f7,#6366f1);
+  border:2px solid rgba(239,246,255,0.16);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 38px rgba(129,140,248,0.95);
 }
-.play-pill svg { width:24px;height:24px;fill:#050816; }
+.play-pill svg { width:24px;height:24px;fill:#020617; }
 .play-pill.loading {
   opacity:0.6;
   box-shadow:none;
   pointer-events:none;
-}
-
-/* Scrubber */
-.scrubber { display:flex;flex-direction:column;gap:6px; }
-.scrub-track {
-  width:100%;height:6px;
-  border-radius:999px;
-  background: rgba(30,64,175,0.4);
-  overflow:hidden;
-  cursor:pointer;
-}
-.scrub-fill {
-  height:100%;width:0%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
-}
-.time-row {
-  display:flex;justify-content:space-between;
-  font-size:11px;color:rgba(209,213,219,0.9);
 }
 
 /* 3-dot loader */
@@ -360,21 +427,19 @@ button {
 .dots span {
   width:6px;height:6px;
   border-radius:999px;
-  background: radial-gradient(circle at center, var(--accent-strong), var(--accent));
-  box-shadow:0 0 10px rgba(129,140,248,0.8);
-  animation: dotPulse 0.8s infinite ease-in-out;
+  background:radial-gradient(circle at center,#a855f7,#6366f1);
+  box-shadow:0 0 10px rgba(129,140,248,0.9);
+  animation:dotPulse 0.8s infinite ease-in-out;
 }
 .dots span:nth-child(2){ animation-delay:0.12s; }
 .dots span:nth-child(3){ animation-delay:0.24s; }
-
 @keyframes dotPulse {
-  0%,80%,100% { transform:scale(0.6); opacity:0.5; }
-  40% { transform:scale(1.1); opacity:1; }
+  0%,80%,100% { transform:scale(0.6);opacity:0.5; }
+  40% { transform:scale(1.1);opacity:1; }
 }
-
 .buffer-dots {
   margin-top:4px;
-  height:16px;
+  height:18px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -383,48 +448,102 @@ button {
 }
 .buffer-dots.show { opacity:1; }
 
-/* Toast */
+/* scrubber */
+.scrubber { display:flex;flex-direction:column;gap:6px; }
+.scrub-track {
+  width:100%;height:6px;
+  border-radius:999px;
+  background:rgba(30,64,175,0.45);
+  overflow:hidden;
+  cursor:pointer;
+}
+.scrub-fill {
+  height:100%;width:0%;
+  background:linear-gradient(90deg,#6366f1,#a855f7);
+}
+.time-row {
+  display:flex;
+  justify-content:space-between;
+  font-size:11px;
+  color:rgba(209,213,219,0.95);
+}
+
+/* toast */
 .toast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%) translateY(10px);
-  background: rgba(15,23,42,0.95);
-  color: #f9fafb;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: 12px;
-  opacity: 0;
+  position:fixed;
+  bottom:80px;
+  left:50%;
+  transform:translateX(-50%) translateY(10px);
+  background:rgba(15,23,42,0.98);
+  color:#f9fafb;
+  padding:8px 16px;
+  border-radius:999px;
+  font-size:12px;
+  opacity:0;
   pointer-events:none;
-  transition: opacity 0.18s ease, transform 0.18s ease;
-  z-index: 100;
+  transition:opacity 0.18s ease,transform 0.18s ease;
+  z-index:100;
 }
 .toast.show {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
 }
 </style>
 </head>
 <body>
 <main>
-  <header>
-    <h1>Muri Player Test</h1>
-    <div class="subtitle">Supabase · Musi-style player · background audio</div>
-  </header>
-
-  <section class="card">
-    <div class="section-title">Upload</div>
-    <div class="upload-row">
-      <input type="file" id="fileInput" accept="video/*" />
-      <button class="btn-primary" onclick="uploadVideo()">Upload</button>
+  <div class="header-row">
+    <div class="header-left">
+      <div class="app-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 9.01 9.01 0 0 0-9-9zm1 12.5a2.5 2.5 0 1 1-3-2.45V8h2v5.05a2.49 2.49 0 0 1 1 1.95z"/></svg>
+      </div>
+      <div>
+        <h1>Muri Player Test</h1>
+        <div class="subtitle">Supabase • Musi-style player • background audio</div>
+      </div>
     </div>
-    <p id="uploadStatus" style="font-size:12px;margin-top:6px;color:var(--muted);"></p>
-  </section>
+  </div>
 
-  <section class="card">
-    <div class="section-title">Videos</div>
-    <div id="videoList" class="video-list"></div>
-  </section>
+  <div class="top-grid">
+    <section class="card">
+      <div style="font-size:16px;font-weight:600;margin-bottom:10px;">Upload</div>
+      <div id="dropzone" class="dropzone">
+        <div class="drop-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2 6.5 7.5l1.41 1.41L11 5.83V16h2V5.83l3.09 3.08 1.41-1.41z"/><path d="M5 18h14v2H5z"/></svg>
+        </div>
+        <div class="drop-title">Drop files or click to upload</div>
+        <div class="drop-sub">Select audio / video files from your device</div>
+        <button class="btn-primary" type="button" onclick="document.getElementById('fileInput').click()">Choose File</button>
+        <input id="fileInput" type="file" accept="video/*,audio/*" style="display:none" />
+      </div>
+      <p id="uploadStatus" style="font-size:12px;margin-top:8px;color:var(--muted);"></p>
+    </section>
+
+    <section class="card">
+      <div class="stats-title">Stats</div>
+      <div class="stats-col">
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 9.01 9.01 0 0 0-9-9zm0 16a7 7 0 1 1 7-7 7.01 7.01 0 0 1-7 7z"/><path d="M11 11V7h2v4h3v2h-5z"/></svg>
+            Storage Used
+          </div>
+          <div class="stat-value" id="statStorage">0 MB</div>
+          <div class="stat-foot">of 10 GB</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 9.01 9.01 0 0 0-9-9zm-1 12.5A2.5 2.5 0 1 1 8 13.05V8h2z"/></svg>
+            Total Tracks
+          </div>
+          <div class="stat-value" id="statTracks">0</div>
+          <div class="stat-foot">uploaded files</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="section-heading">Videos</div>
+  <section id="videoGrid" class="video-grid"></section>
 </main>
 
 <!-- MINI PLAYER -->
@@ -432,7 +551,7 @@ button {
   <div class="mini-art"></div>
   <div class="mini-info" onclick="openFullPlayer()">
     <div class="mini-title" id="miniTitle"></div>
-    <div class="mini-sub" id="miniSub"></div>
+    <div class="mini-sub">Playing from Muri uploads</div>
   </div>
   <div class="mini-controls">
     <button class="icon-btn" id="miniPlayBtn"></button>
@@ -463,7 +582,7 @@ button {
 
   <div class="track-meta">
     <div class="track-title" id="fullTitle"></div>
-    <div class="track-artist">From your Muri uploads</div>
+    <div class="track-artist">Muri</div>
   </div>
 
   <div class="player-controls">
@@ -497,7 +616,7 @@ button {
 <div class="toast" id="toast"></div>
 
 <script>
-// Supabase
+// Supabase client
 const db = supabase.createClient(
   "https://azkthlaezuqiuidokqwy.supabase.co",
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6a3RobGFlenVxaXVpZG9rcXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NzQ1NTMsImV4cCI6MjA4MDA1MDU1M30.-ddzglqIhff6UVujsQbgmpESTrHsXLww7AZ_fcEdLHg"
@@ -506,9 +625,14 @@ const db = supabase.createClient(
 // Elements
 const videoEl = document.getElementById("video");
 const audioEl = document.getElementById("audio");
+const videoGrid = document.getElementById("videoGrid");
+const statStorage = document.getElementById("statStorage");
+const statTracks = document.getElementById("statTracks");
+const dropzone = document.getElementById("dropzone");
+const uploadStatus = document.getElementById("uploadStatus");
+const toastEl = document.getElementById("toast");
 const miniPlayer = document.getElementById("miniPlayer");
 const miniTitle = document.getElementById("miniTitle");
-const miniSub = document.getElementById("miniSub");
 const miniPlayBtn = document.getElementById("miniPlayBtn");
 const fullPlayer = document.getElementById("fullPlayer");
 const fullTitle = document.getElementById("fullTitle");
@@ -517,8 +641,6 @@ const scrubFill = document.getElementById("scrubFill");
 const timeCurrent = document.getElementById("timeCurrent");
 const timeTotal = document.getElementById("timeTotal");
 const bufferDots = document.getElementById("bufferDots");
-const uploadStatus = document.getElementById("uploadStatus");
-const toastEl = document.getElementById("toast");
 
 let currentTrack = null;
 let isLoading = false;
@@ -528,11 +650,11 @@ const playIcon = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
 const pauseIcon = `<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>`;
 const dotsHTML = `<div class="dots"><span></span><span></span><span></span></div>`;
 
-// helpers
+// Helpers
 function stripExt(name){ return name.replace(/\.[^/.]+$/, ""); }
 function formatTime(sec){
   if(!sec || isNaN(sec)) return "0:00";
-  const s=Math.floor(sec), m=Math.floor(s/60), r=s%60;
+  const s = Math.floor(sec), m = Math.floor(s/60), r = s%60;
   return `${m}:${r.toString().padStart(2,"0")}`;
 }
 function toast(msg){
@@ -558,60 +680,80 @@ function setLoading(loading){
   }
 }
 
-// list videos
-async function listVideos(){
+// UI play/pause
+function setPlayState(playing){
+  miniPlayBtn.innerHTML = playing ? pauseIcon : playIcon;
+  fullPlayBtn.innerHTML = playing ? pauseIcon : playIcon;
+}
+
+// LIST + STATS
+async function refreshVideosAndStats(){
   const { data, error } = await db
     .from("videos")
     .select("*", { head:false })
     .order("created_at", { ascending:false });
 
-  const list = document.getElementById("videoList");
-  list.innerHTML = "";
+  videoGrid.innerHTML = "";
 
   if(error){
-    list.innerHTML = `<div style="font-size:13px;color:var(--muted);">Failed to load videos</div>`;
+    videoGrid.innerHTML = `<div style="font-size:13px;color:var(--muted);">Failed to load videos</div>`;
     return;
   }
   if(!data || !data.length){
-    list.innerHTML = `<div style="font-size:13px;color:var(--muted);">Nothing uploaded yet</div>`;
-    return;
+    videoGrid.innerHTML = `<div style="font-size:13px;color:var(--muted);">No uploads yet.</div>`;
+    statTracks.textContent = "0";
+  }else{
+    statTracks.textContent = data.length.toString();
+    data.forEach((row, idx)=>{
+      const card = document.createElement("article");
+      card.className = "video-card";
+      const thumbClass = idx % 2 ? "video-thumb blue" : "video-thumb";
+      card.innerHTML = `
+        <div class="${thumbClass}">
+          <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 9.01 9.01 0 0 0-9-9zm2.5 11.5a2.5 2.5 0 1 1-3-2.45V8h2v4.05a2.49 2.49 0 0 1 1 2.45z"/></svg>
+        </div>
+        <div class="video-info">
+          <div class="video-title">${stripExt(row.title)}</div>
+          <div class="video-artist">Muri</div>
+          <div class="video-date">${new Date(row.created_at).toLocaleString()}</div>
+        </div>
+        <div class="video-playbar">
+          <span>Play</span>
+          <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </div>
+      `;
+      card.querySelector(".video-playbar").onclick = () => startTrack(row);
+      videoGrid.appendChild(card);
+    });
   }
 
-  data.forEach(row=>{
-    const item=document.createElement("div");
-    item.className="video-item";
-    item.innerHTML=`
-      <div class="thumb"></div>
-      <div class="video-meta-wrapper">
-        <div class="video-title">${stripExt(row.title)}</div>
-        <div class="video-meta">${new Date(row.created_at).toLocaleString()}</div>
-      </div>
-      <button class="btn-ghost">Play</button>
-    `;
-    item.querySelector("button").onclick=()=>startTrack(row);
-    list.appendChild(item);
-  });
+  // storage stats – sum object sizes
+  const { data: objects } = await db.storage.from("Storage").list("", { limit: 1000 });
+  let totalBytes = 0;
+  if(objects && objects.length){
+    objects.forEach(obj => { if(obj.metadata && obj.metadata.size) totalBytes += obj.metadata.size; });
+  }
+  const mb = totalBytes / (1024*1024);
+  statStorage.textContent = `${mb.toFixed(1)} MB`;
 }
-listVideos();
-setInterval(listVideos, 5000);
+refreshVideosAndStats();
+setInterval(refreshVideosAndStats, 5000);
 
-// playback
+// PLAYBACK
 async function startTrack(row){
-  currentTrack=row;
-  miniPlayer.style.display="flex";
-  miniTitle.textContent=stripExt(row.title);
-  miniSub.textContent="Playing from uploads";
-  fullTitle.textContent=stripExt(row.title);
+  currentTrack = row;
+  miniPlayer.style.display = "flex";
+  miniTitle.textContent = stripExt(row.title);
+  fullTitle.textContent = stripExt(row.title);
 
-  audioEl.src=row.file_url;
-  videoEl.src=row.file_url;
-  videoEl.muted=true;
+  audioEl.src = row.file_url;
+  videoEl.src = row.file_url;
+  videoEl.muted = true;
 
   setLoading(true);
 
   try{
-    await audioEl.play(); // triggers buffering on mobile
-    // once audio is actually playing, start video
+    await audioEl.play();  // user gesture -> allowed
     videoEl.currentTime = audioEl.currentTime;
     videoEl.play().catch(()=>{});
     setLoading(false);
@@ -626,20 +768,15 @@ async function startTrack(row){
   if("mediaSession" in navigator){
     navigator.mediaSession.metadata = new MediaMetadata({
       title: stripExt(row.title),
-      artist: "Muri Uploads",
-      album: "Muri",
+      artist: "Muri",
+      album: "Muri Player",
     });
   }
 }
 
-function setPlayState(playing){
-  miniPlayBtn.innerHTML = playing ? pauseIcon : playIcon;
-  fullPlayBtn.innerHTML = playing ? pauseIcon : playIcon;
-}
-
-function togglePlay(e){
-  if(e) e.stopPropagation();
-  if(isLoading || !currentTrack) return;
+function togglePlay(ev){
+  if(ev) ev.stopPropagation();
+  if(!currentTrack || isLoading) return;
 
   if(audioEl.paused){
     setLoading(true);
@@ -657,99 +794,148 @@ function togglePlay(e){
   }
 }
 
-// seek
 function seekRelative(delta){
   if(!audioEl.duration) return;
-  let t=audioEl.currentTime+delta;
-  t=Math.max(0,Math.min(t,audioEl.duration));
-  audioEl.currentTime=t;
-  videoEl.currentTime=t;
-}
-function scrub(e){
-  if(!audioEl.duration) return;
-  const track=e.currentTarget.querySelector(".scrub-track");
-  const rect=track.getBoundingClientRect();
-  const percent=(e.clientX-rect.left)/rect.width;
-  const t=Math.max(0,Math.min(percent,1))*audioEl.duration;
-  audioEl.currentTime=t;
-  videoEl.currentTime=t;
+  let t = audioEl.currentTime + delta;
+  t = Math.max(0, Math.min(t, audioEl.duration));
+  audioEl.currentTime = t;
+  videoEl.currentTime = t;
 }
 
-// full player
+function scrub(e){
+  if(!audioEl.duration) return;
+  const track = e.currentTarget.querySelector(".scrub-track");
+  const rect = track.getBoundingClientRect();
+  const percent = (e.clientX - rect.left) / rect.width;
+  const t = Math.max(0, Math.min(percent,1)) * audioEl.duration;
+  audioEl.currentTime = t;
+  videoEl.currentTime = t;
+}
+
 function openFullPlayer(){
   if(!currentTrack) return;
-  fullPlayer.style.display="flex";
+  fullPlayer.style.display = "flex";
+  // ensure video tries to play from this tap
   videoEl.play().catch(()=>{});
 }
 function closeFullPlayer(){
-  fullPlayer.style.display="none";
-  videoEl.pause();
+  fullPlayer.style.display = "none";
+  videoEl.pause(); // audio continues
 }
 function enterNativeFullscreen(){
   if(videoEl.webkitEnterFullscreen) videoEl.webkitEnterFullscreen();
   else if(videoEl.requestFullscreen) videoEl.requestFullscreen();
 }
 
-// sync loop
-function syncLoop(){
-  if(!audioEl.paused && audioEl.duration){
-    const a=audioEl.currentTime;
-    const v=videoEl.currentTime;
-    const diff=v-a;
-    if(Math.abs(diff)>0.25){
-      videoEl.currentTime=a;
+// Smooth sync loop – gently nudge only when necessary
+let lastNudge = 0;
+function syncLoop(ts){
+  if(!audioEl.paused && audioEl.duration && videoEl.readyState >= 2){
+    const a = audioEl.currentTime;
+    const v = videoEl.currentTime;
+    const drift = v - a;
+    // allow up to 0.3s drift to avoid choppiness
+    if(Math.abs(drift) > 0.30 && ts - lastNudge > 200){
+      videoEl.currentTime = a;
+      lastNudge = ts;
     }
-    const pct=(a/audioEl.duration)*100;
-    scrubFill.style.width=pct+"%";
-    timeCurrent.textContent=formatTime(a);
-    timeTotal.textContent=formatTime(audioEl.duration);
+    const pct = (a / audioEl.duration) * 100;
+    scrubFill.style.width = pct + "%";
+    timeCurrent.textContent = formatTime(a);
+    timeTotal.textContent = formatTime(audioEl.duration);
   }
   requestAnimationFrame(syncLoop);
 }
-syncLoop();
+requestAnimationFrame(syncLoop);
 
-// audio buffering events -> loader
-audioEl.addEventListener("waiting", ()=>setLoading(true));
-audioEl.addEventListener("playing", ()=>setLoading(false));
-audioEl.addEventListener("canplay", ()=>setLoading(false));
+// Audio buffering events -> loader
+audioEl.addEventListener("waiting", () => setLoading(true));
+audioEl.addEventListener("playing", () => setLoading(false));
+audioEl.addEventListener("canplay", () => setLoading(false));
 
-// upload
+// Lock-screen MediaSession handlers
+if ("mediaSession" in navigator) {
+  navigator.mediaSession.setActionHandler("play", () => {
+    audioEl.play().then(()=>{
+      videoEl.play().catch(()=>{});
+      setPlayState(true);
+    }).catch(()=>{});
+  });
+  navigator.mediaSession.setActionHandler("pause", () => {
+    audioEl.pause();
+    videoEl.pause();
+    setPlayState(false);
+  });
+  navigator.mediaSession.setActionHandler("seekto", (details) => {
+    if (details.seekTime != null) {
+      audioEl.currentTime = details.seekTime;
+      videoEl.currentTime = details.seekTime;
+    }
+  });
+}
+
+// Toast drag/drop
+["dragenter","dragover"].forEach(evt=>{
+  dropzone.addEventListener(evt,e=>{
+    e.preventDefault();e.stopPropagation();
+    dropzone.classList.add("dragover");
+  });
+});
+["dragleave","drop"].forEach(evt=>{
+  dropzone.addEventListener(evt,e=>{
+    e.preventDefault();e.stopPropagation();
+    dropzone.classList.remove("dragover");
+  });
+});
+dropzone.addEventListener("drop", e=>{
+  const file = e.dataTransfer.files[0];
+  if(file){
+    document.getElementById("fileInput").files = e.dataTransfer.files;
+    uploadVideo();
+  }
+});
+
+// Upload
 async function uploadVideo(){
-  const file=document.getElementById("fileInput").files[0];
+  const file = document.getElementById("fileInput").files[0];
   if(!file){ toast("Select a file"); return; }
 
-  const ext=file.name.split(".").pop();
-  const fileName=crypto.randomUUID()+"."+ext;
-  uploadStatus.textContent="Uploading...";
+  const ext = file.name.split(".").pop();
+  const fileName = crypto.randomUUID() + "." + ext;
+  uploadStatus.textContent = "Uploading...";
 
-  const { error:upErr } = await db.storage.from("Storage").upload(fileName,file);
+  const { error: upErr } = await db.storage.from("Storage").upload(fileName, file);
   if(upErr){
     console.error(upErr);
     toast("Upload failed");
-    uploadStatus.textContent="";
+    uploadStatus.textContent = "";
     return;
   }
 
-  const { data:pub } = db.storage.from("Storage").getPublicUrl(fileName);
-  const { error:insErr } = await db.from("videos").insert({
-    title:file.name,
-    file_path:fileName,
-    file_url:pub.publicUrl,
-    source_url:"",
-    uploaded_by:null
+  const { data: pub } = db.storage.from("Storage").getPublicUrl(fileName);
+  const { error: insErr } = await db.from("videos").insert({
+    title: file.name,
+    file_path: fileName,
+    file_url: pub.publicUrl,
+    source_url: "",
+    uploaded_by: null
   });
 
   if(insErr){
     console.error(insErr);
     toast("DB insert failed");
-    uploadStatus.textContent="";
+    uploadStatus.textContent = "";
     return;
   }
 
-  uploadStatus.textContent="";
+  uploadStatus.textContent = "";
   toast("Upload complete");
-  listVideos();
+  refreshVideosAndStats();
 }
+
+// initialize buttons
+miniPlayBtn.innerHTML = playIcon;
+fullPlayBtn.innerHTML = playIcon;
 </script>
 </body>
 </html>
