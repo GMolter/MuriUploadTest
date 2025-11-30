@@ -2,323 +2,297 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Muri Upload Test — Pretty UI</title>
+<title>Muri Advanced Player Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- GOOGLE FONTS -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<!-- ICONS -->
-<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-    :root {
-        --bg: #f5f5fb;
-        --fg: #111;
-        --card: rgba(255,255,255,0.8);
-        --glass: rgba(255,255,255,0.6);
-        --border: rgba(0,0,0,0.1);
-        --primary: #6366f1;
-        --primary-hover: #4f46e5;
-    }
+/* ======== THEME ======== */
+:root {
+    --bg: #f5f5fb;
+    --fg: #111;
+    --card: rgba(255,255,255,0.7);
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --border: rgba(0,0,0,0.1);
+}
 
-    body.dark {
-        --bg: #0b1120;
-        --fg: #fff;
-        --card: rgba(20,20,30,0.6);
-        --glass: rgba(20,20,30,0.4);
-        --border: rgba(255,255,255,0.1);
-    }
+body.dark {
+    --bg: #0b1120;
+    --fg: #fff;
+    --card: rgba(20,20,30,0.5);
+    --border: rgba(255,255,255,0.1);
+}
 
-    body {
-        background: var(--bg);
-        color: var(--fg);
-        font-family: "Inter", sans-serif;
-        margin: 0;
-        padding: 20px;
-        transition: background 0.3s, color 0.3s;
-    }
+body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: Inter, sans-serif;
+    margin: 0;
+    padding: 20px;
+    max-width: 700px;
+    margin: auto;
+}
 
-    h1 {
-        font-size: 28px;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
+/* GENERAL */
+button {
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    font-size: 15px;
+}
+button:hover { background: var(--primary-hover); }
 
-    button {
-        background: var(--primary);
-        color: #fff;
-        padding: 12px 16px;
-        border: none;
-        border-radius: 10px;
-        font-size: 15px;
-        margin-top: 10px;
-        width: 100%;
-        cursor: pointer;
-        transition: background 0.2s;
-    }
+/* CARD */
+.card {
+    padding: 20px;
+    border-radius: 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    margin-top: 20px;
+    backdrop-filter: blur(10px);
+}
 
-    button:hover { background: var(--primary-hover); }
+/* PLAYER */
+.player-container {
+    position: relative;
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-top: 20px;
+}
 
-    hr { border: none; border-bottom: 1px solid var(--border); margin: 30px 0; }
+video {
+    width: 100%;
+    display: block;
+}
 
-    /* GLASS PANEL */
-    .card {
-        background: var(--card);
-        border: 1px solid var(--border);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 20px;
-        margin-top: 20px;
-    }
+/* CUSTOM OVERLAY */
+.player-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+}
 
-    /* MODAL */
-    .modal {
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.6);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-    }
+.player-center {
+    pointer-events: auto;
+    display: flex;
+    justify-content: center;
+    margin-top: 30%;
+}
 
-    .modal.active { display: flex; }
+.control-btn {
+    width: 60px;
+    height: 60px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 
-    .modal-content {
-        background: var(--card);
-        padding: 25px;
-        width: 90%;
-        max-width: 400px;
-        border-radius: 16px;
-        border: 1px solid var(--border);
-        animation: fadeUp 0.25s ease;
-    }
+.skip-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 40px;
+    margin-top: 20px;
+}
 
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+.small-btn {
+    width: 50px;
+    height: 50px;
+    background: rgba(0,0,0,0.35);
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
 
-    input {
-        padding: 12px;
-        font-size: 15px;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        width: 100%;
-        margin-top: 10px;
-        background: var(--glass);
-        color: var(--fg);
-    }
+/* PROGRESS BAR */
+.progress-container {
+    width: 100%;
+    height: 6px;
+    background: rgba(255,255,255,0.3);
+    position: relative;
+    cursor: pointer;
+}
 
-    #videoList .item {
-        background: var(--card);
-        padding: 12px;
-        border-radius: 12px;
-        margin-bottom: 15px;
-        border: 1px solid var(--border);
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
+.progress-bar {
+    height: 100%;
+    background: var(--primary);
+    width: 0%;
+}
 
-    #player {
-        width: 100%;
-        border-radius: 12px;
-        margin-top: 20px;
-    }
-
-    /* TOAST */
-    #toast {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: var(--fg);
-        color: var(--bg);
-        padding: 14px 18px;
-        border-radius: 12px;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.3s, transform 0.3s;
-        transform: translateY(20px);
-    }
-
-    #toast.show {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
+/* HIDDEN AUDIO */
+audio {
+    display: none;
+}
 </style>
 </head>
 <body>
 
-<h1>Muri Backend Playground</h1>
-<button onclick="openLogin()">Login / Signup</button>
-<button onclick="toggleTheme()">Toggle Dark Mode</button>
+<h1>Muri Advanced Player Test</h1>
 
-<div id="authStatus" style="margin-top:10px;color:var(--primary);font-weight:600;">Checking auth...</div>
-
+<!-- Upload Section -->
 <div class="card">
-    <h2>Upload a Video</h2>
+    <h2>Upload Video</h2>
     <input type="file" id="fileInput" accept="video/*">
     <button onclick="uploadVideo()">Upload</button>
     <p id="uploadStatus"></p>
 </div>
 
+<!-- Video List -->
 <div class="card">
-    <h2>Uploaded Videos</h2>
+    <h2>Videos</h2>
     <div id="videoList"></div>
 </div>
 
+<!-- ADVANCED PLAYER -->
 <h2>Player</h2>
-<video id="player" controls></video>
 
-<div id="toast"></div>
+<div class="player-container">
+    <video id="video"></video>
+    <audio id="audio"></audio>
 
-<!-- LOGIN MODAL -->
-<div class="modal" id="loginModal">
-    <div class="modal-content">
-        <h2 style="margin-top:0;">Login / Signup</h2>
-        <input id="email" type="email" placeholder="Email">
-        <input id="password" type="password" placeholder="Password">
-        <button onclick="signup()">Sign Up</button>
-        <button onclick="login()">Log In</button>
-        <button onclick="closeLogin()" style="background:#aaa;">Cancel</button>
+    <div class="player-overlay">
+        <div></div>
+        <div class="player-center">
+            <button class="control-btn" id="playPauseBtn">▶</button>
+        </div>
+
+        <div class="skip-row">
+            <button class="small-btn" onclick="skipBack()">⟲ 10</button>
+            <button class="small-btn" onclick="skipForward()">⟳ 10</button>
+        </div>
+
+        <div>
+            <div class="progress-container" onclick="seek(event)">
+                <div class="progress-bar" id="progress"></div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- SUPABASE CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <script>
-// =========================================
-// CONFIG
-// =========================================
+// ======== SUPABASE CONFIG ========
 const SUPABASE_URL = "https://azkthlaezuqiuidokqwy.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6a3RobGFlenVxaXVpZG9rcXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NzQ1NTMsImV4cCI6MjA4MDA1MDU1M30.-ddzglqIhff6UVujsQbgmpESTrHsXLww7AZ_fcEdLHg";
-
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// =========================================
-// UI HELPERS
-// =========================================
-function toast(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 3000);
+// ======== DOM ELEMENTS ========
+const video = document.getElementById("video");
+const audio = document.getElementById("audio");
+const progress = document.getElementById("progress");
+const playPauseBtn = document.getElementById("playPauseBtn");
+
+// ======== LOAD AND PLAY ========
+function playVideo(url) {
+    video.src = url;
+    audio.src = url;
+
+    video.play();
+    audio.play();
+
+    playPauseBtn.textContent = "⏸";
+    startProgressLoop();
 }
 
-function openLogin() {
-    document.getElementById("loginModal").classList.add("active");
+// ======== SKIP CONTROLS ========
+function skipBack() {
+    audio.currentTime -= 10;
+    video.currentTime = audio.currentTime;
+}
+function skipForward() {
+    audio.currentTime += 10;
+    video.currentTime = audio.currentTime;
 }
 
-function closeLogin() {
-    document.getElementById("loginModal").classList.remove("active");
-}
-
-function toggleTheme() {
-    document.body.classList.toggle("dark");
-    toast("Theme toggled");
-}
-
-// =========================================
-// AUTH
-// =========================================
-async function signup() {
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
-
-    const { error } = await db.auth.signUp({ email, password });
-    if (error) toast(error.message);
-    else toast("Signup successful!");
-}
-
-async function login() {
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
-
-    const { error } = await db.auth.signInWithPassword({ email, password });
-    if (error) toast(error.message);
-    else {
-        toast("Login successful!");
-        closeLogin();
-        updateAuthStatus();
+// ======== PLAY / PAUSE ========
+playPauseBtn.onclick = function () {
+    if (audio.paused) {
+        audio.play();
+        video.play();
+        playPauseBtn.textContent = "⏸";
+    } else {
+        audio.pause();
+        video.pause();
+        playPauseBtn.textContent = "▶";
     }
+};
+
+// ======== PROGRESS BAR LOOP ========
+function startProgressLoop() {
+    setInterval(() => {
+        if (audio.duration) {
+            let percent = (audio.currentTime / audio.duration) * 100;
+            progress.style.width = percent + "%";
+            video.currentTime = audio.currentTime;
+        }
+    }, 300);
 }
 
-async function updateAuthStatus() {
-    const { data } = await db.auth.getUser();
-    document.getElementById("authStatus").innerText =
-        data.user ? `Logged in as: ${data.user.email}` : "Not logged in";
-}
-updateAuthStatus();
-
-// =========================================
-// UPLOAD
-// =========================================
-async function uploadVideo() {
-    const file = document.getElementById("fileInput").files[0];
-    if (!file) return toast("No file selected.");
-
-    const { data } = await db.auth.getUser();
-    const uploaded_by = data.user ? data.user.id : null;
-
-    const ext = file.name.split(".").pop();
-    const fileName = `${crypto.randomUUID()}.${ext}`;
-
-    const { error: uploadError } = await db.storage.from("Storage").upload(fileName, file);
-    if (uploadError) return toast("Upload failed!");
-
-    const { data: pub } = db.storage.from("Storage").getPublicUrl(fileName);
-    const file_url = pub.publicUrl;
-
-    const { error: insertError } = await db.from("videos").insert({
-        title: file.name,
-        file_path: fileName,
-        file_url,
-        source_url: "",
-        uploaded_by
-    });
-
-    if (insertError) return toast("Database error!");
-
-    toast("Uploaded successfully!");
-    listVideos();
+function seek(event) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const percent = (event.clientX - rect.left) / rect.width;
+    audio.currentTime = percent * audio.duration;
+    video.currentTime = audio.currentTime;
 }
 
-// =========================================
-// LOAD VIDEOS
-// =========================================
+// ======== VIDEO LIST ========
 async function listVideos() {
-    const { data, error } = await db.from("videos").select("*").order("created_at", { ascending: false });
-
+    const { data } = await db.from("videos").select("*").order("created_at", { ascending: false });
     const list = document.getElementById("videoList");
+
     list.innerHTML = "";
-
-    if (!data) return;
-
-    data.forEach(video => {
+    data.forEach(v => {
         const div = document.createElement("div");
-        div.className = "item";
         div.innerHTML = `
-            <strong>${video.title}</strong>
-            <button onclick="playVideo('${video.file_url}')">Play</button>
+            <strong>${v.title}</strong><br>
+            <button onclick="playVideo('${v.file_url}')">Play</button>
         `;
         list.appendChild(div);
     });
 }
 listVideos();
 
-// =========================================
-// VIDEO PLAYER
-// =========================================
-function playVideo(url) {
-    const player = document.getElementById("player");
-    player.src = url;
-    player.play();
-}
+// ======== UPLOAD ========
+async function uploadVideo() {
+    const file = document.getElementById("fileInput").files[0];
+    if (!file) return alert("No file selected");
 
+    const ext = file.name.split(".").pop();
+    const fileName = crypto.randomUUID() + "." + ext;
+
+    const { error } = await db.storage.from("Storage").upload(fileName, file);
+    if (error) return alert("Upload failed");
+
+    const { data: pub } = db.storage.from("Storage").getPublicUrl(fileName);
+
+    await db.from("videos").insert({
+        title: file.name,
+        file_path: fileName,
+        file_url: pub.publicUrl,
+        source_url: "",
+        uploaded_by: null
+    });
+
+    alert("Upload OK!");
+    listVideos();
+}
 </script>
+
 </body>
 </html>
