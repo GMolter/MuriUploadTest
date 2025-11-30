@@ -2,297 +2,658 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Muri Advanced Player Test</title>
+<title>Muri Player Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-/* ======== THEME ======== */
 :root {
-    --bg: #f5f5fb;
-    --fg: #111;
-    --card: rgba(255,255,255,0.7);
-    --primary: #6366f1;
-    --primary-hover: #4f46e5;
-    --border: rgba(0,0,0,0.1);
+  --bg: #f5f5fb;
+  --bg-soft: #ffffff;
+  --fg: #0f172a;
+  --accent: #6366f1;
+  --accent-soft: rgba(99,102,241,0.15);
+  --accent-strong: #a855f7;
+  --border: rgba(15,23,42,0.08);
+  --muted: #64748b;
 }
 
-body.dark {
-    --bg: #0b1120;
-    --fg: #fff;
-    --card: rgba(20,20,30,0.5);
-    --border: rgba(255,255,255,0.1);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #020617;
+    --bg-soft: #020617;
+    --fg: #e5e7eb;
+    --accent: #6366f1;
+    --accent-soft: rgba(99,102,241,0.15);
+    --accent-strong: #a855f7;
+    --border: rgba(148,163,184,0.2);
+    --muted: #94a3b8;
+  }
 }
+
+* { box-sizing: border-box; }
 
 body {
-    background: var(--bg);
-    color: var(--fg);
-    font-family: Inter, sans-serif;
-    margin: 0;
-    padding: 20px;
-    max-width: 700px;
-    margin: auto;
+  margin: 0;
+  padding: 16px 16px 96px;
+  background: radial-gradient(circle at top left, rgba(148,163,253,0.18), transparent 55%),
+              radial-gradient(circle at bottom right, rgba(244,114,182,0.13), transparent 55%),
+              var(--bg);
+  color: var(--fg);
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-/* GENERAL */
-button {
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    width: 100%;
-    background: var(--primary);
-    color: white;
-    font-size: 15px;
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 8px 0 4px;
 }
-button:hover { background: var(--primary-hover); }
 
-/* CARD */
+.subtitle {
+  font-size: 13px;
+  color: var(--muted);
+}
+
 .card {
-    padding: 20px;
-    border-radius: 16px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    margin-top: 20px;
-    backdrop-filter: blur(10px);
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.8);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+}
+@media (prefers-color-scheme: dark) {
+  .card {
+    background: rgba(15,23,42,0.8);
+  }
 }
 
-/* PLAYER */
-.player-container {
-    position: relative;
-    width: 100%;
-    border-radius: 16px;
-    overflow: hidden;
-    margin-top: 20px;
+.section-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
 
-video {
-    width: 100%;
-    display: block;
+input[type="file"] {
+  width: 100%;
+  margin: 8px 0 10px;
+  font-size: 13px;
 }
 
-/* CUSTOM OVERLAY */
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+/* Primary button */
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 999px;
+  background: linear-gradient(to right, var(--accent), var(--accent-strong));
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 10px 20px rgba(79,70,229,0.35);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, opacity 0.1s;
+}
+.btn-primary:active {
+  transform: scale(0.97);
+  box-shadow: 0 4px 10px rgba(79,70,229,0.45);
+  opacity: 0.9;
+}
+
+/* Video list */
+.video-item {
+  padding: 10px 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(148,163,184,0.06);
+  margin-top: 8px;
+}
+.video-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+.video-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+.btn-ghost {
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: rgba(99,102,241,0.08);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* MINI PLAYER */
+.mini-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 16px 18px;
+  background: linear-gradient(to top, rgba(15,23,42,0.92), rgba(15,23,42,0.85));
+  color: #f9fafb;
+  display: none;
+  align-items: center;
+  gap: 12px;
+  z-index: 20;
+}
+
+.mini-art {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: radial-gradient(circle at top left, var(--accent-strong), var(--accent));
+  flex-shrink: 0;
+}
+
+.mini-info {
+  flex: 1;
+  min-width: 0;
+}
+.mini-title {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mini-sub {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.mini-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon-btn {
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  background: rgba(15,23,42,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e5e7eb;
+  font-size: 15px;
+}
+
+.icon-btn.primary {
+  background: #f97316;
+  color: #111827;
+}
+
+/* FULL PLAYER OVERLAY */
 .player-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(249,115,22,0.45), transparent 55%),
+              radial-gradient(circle at bottom, rgba(129,140,248,0.35), transparent 55%),
+              #020617;
+  display: none;
+  flex-direction: column;
+  padding: 16px;
+  z-index: 30;
+  color: #f9fafb;
 }
 
-.player-center {
-    pointer-events: auto;
-    display: flex;
-    justify-content: center;
-    margin-top: 30%;
+.player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.player-header-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(209,213,219,0.9);
 }
 
-.control-btn {
-    width: 60px;
-    height: 60px;
-    background: rgba(0,0,0,0.4);
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.3);
-    color: white;
-    font-size: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* VIDEO AREA */
+.video-wrapper {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #020617;
+  border: 1px solid rgba(148,163,184,0.4);
+}
+.video-topbar {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  z-index: 2;
+  display: flex;
+  gap: 6px;
+}
+.video-icon-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.player-video {
+  width: 100%;
+  display: block;
 }
 
-.skip-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 40px;
-    margin-top: 20px;
+/* META */
+.track-meta {
+  margin-top: 14px;
+}
+.track-title {
+  font-size: 17px;
+  font-weight: 700;
+}
+.track-artist {
+  font-size: 13px;
+  color: rgba(209,213,219,0.85);
 }
 
-.small-btn {
-    width: 50px;
-    height: 50px;
-    background: rgba(0,0,0,0.35);
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
+/* MAIN CONTROLS */
+.player-controls {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-/* PROGRESS BAR */
-.progress-container {
-    width: 100%;
-    height: 6px;
-    background: rgba(255,255,255,0.3);
-    position: relative;
-    cursor: pointer;
+.primary-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
 }
 
-.progress-bar {
-    height: 100%;
-    background: var(--primary);
-    width: 0%;
+.round-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.6);
+  border: 1px solid rgba(148,163,184,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
 }
 
-/* HIDDEN AUDIO */
-audio {
-    display: none;
+.play-pill {
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  background: radial-gradient(circle at center, #f97316, #ea580c);
+  box-shadow: 0 0 30px rgba(249,115,22,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #111827;
+}
+
+/* SCRUBBER */
+.scrubber {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.scrub-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(30,64,175,0.4);
+  overflow: hidden;
+}
+.scrub-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(to right, #f97316, #fb923c);
+}
+
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: rgba(209,213,219,0.8);
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(15,23,42,0.96);
+  color: #e5e7eb;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  z-index: 40;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 </style>
 </head>
 <body>
 
-<h1>Muri Advanced Player Test</h1>
+<header>
+  <h1>Muri Player Test</h1>
+  <div class="subtitle">Supabase + Musi-style mini player & background audio</div>
+</header>
 
-<!-- Upload Section -->
-<div class="card">
-    <h2>Upload Video</h2>
-    <input type="file" id="fileInput" accept="video/*">
-    <button onclick="uploadVideo()">Upload</button>
-    <p id="uploadStatus"></p>
+<section class="card">
+  <div class="section-title">Upload video</div>
+  <input type="file" id="fileInput" accept="video/*" />
+  <button class="btn-primary" onclick="uploadVideo()">Upload</button>
+  <p id="uploadStatus" style="font-size:12px;margin-top:6px;color:var(--muted);"></p>
+</section>
+
+<section class="card">
+  <div class="section-title">Videos</div>
+  <div id="videoList"></div>
+</section>
+
+<!-- MINI PLAYER -->
+<div class="mini-player" id="miniPlayer">
+  <div class="mini-art"></div>
+  <div class="mini-info" onclick="openFullPlayer()">
+    <div class="mini-title" id="miniTitle">No track</div>
+    <div class="mini-sub" id="miniSub">Tap to open player</div>
+  </div>
+  <div class="mini-controls">
+    <button class="icon-btn" onclick="togglePlay(event)" id="miniPlayBtn">▶</button>
+    <button class="icon-btn" onclick="openFullPlayer()">⤢</button>
+  </div>
 </div>
 
-<!-- Video List -->
-<div class="card">
-    <h2>Videos</h2>
-    <div id="videoList"></div>
-</div>
+<!-- FULL PLAYER OVERLAY -->
+<div class="player-overlay" id="fullPlayer">
+  <div class="player-header">
+    <button class="icon-btn" onclick="closeFullPlayer()">←</button>
+    <div class="player-header-title">NOW PLAYING</div>
+    <div style="width:32px;"></div>
+  </div>
 
-<!-- ADVANCED PLAYER -->
-<h2>Player</h2>
-
-<div class="player-container">
-    <video id="video"></video>
-    <audio id="audio"></audio>
-
-    <div class="player-overlay">
-        <div></div>
-        <div class="player-center">
-            <button class="control-btn" id="playPauseBtn">▶</button>
-        </div>
-
-        <div class="skip-row">
-            <button class="small-btn" onclick="skipBack()">⟲ 10</button>
-            <button class="small-btn" onclick="skipForward()">⟳ 10</button>
-        </div>
-
-        <div>
-            <div class="progress-container" onclick="seek(event)">
-                <div class="progress-bar" id="progress"></div>
-            </div>
-        </div>
+  <div class="video-wrapper">
+    <div class="video-topbar">
+      <button class="video-icon-btn" onclick="enterNativeFullscreen()" title="Fullscreen">⤢</button>
     </div>
+    <video id="video" class="player-video" muted playsinline webkit-playsinline></video>
+  </div>
+
+  <div class="track-meta">
+    <div class="track-title" id="fullTitle">No track selected</div>
+    <div class="track-artist" id="fullArtist">Uploaded via Supabase</div>
+  </div>
+
+  <div class="player-controls">
+    <div class="primary-controls">
+      <button class="round-icon" onclick="seekRelative(-10)">⟲</button>
+      <button class="play-pill" onclick="togglePlay(event)" id="fullPlayBtn">▶</button>
+      <button class="round-icon" onclick="seekRelative(10)">⟳</button>
+    </div>
+
+    <div class="scrubber" onclick="scrub(event)">
+      <div class="scrub-track">
+        <div class="scrub-fill" id="scrubFill"></div>
+      </div>
+      <div class="time-row">
+        <span id="timeCurrent">0:00</span>
+        <span id="timeTotal">0:00</span>
+      </div>
+    </div>
+  </div>
 </div>
+
+<audio id="audio" playsinline></audio>
+
+<div class="toast" id="toast"></div>
 
 <script>
-// ======== SUPABASE CONFIG ========
+// === SUPABASE CONFIG ===
 const SUPABASE_URL = "https://azkthlaezuqiuidokqwy.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6a3RobGFlenVxaXVpZG9rcXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NzQ1NTMsImV4cCI6MjA4MDA1MDU1M30.-ddzglqIhff6UVujsQbgmpESTrHsXLww7AZ_fcEdLHg";
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ======== DOM ELEMENTS ========
-const video = document.getElementById("video");
-const audio = document.getElementById("audio");
-const progress = document.getElementById("progress");
-const playPauseBtn = document.getElementById("playPauseBtn");
+// === DOM ELEMENTS ===
+const videoEl = document.getElementById("video");
+const audioEl = document.getElementById("audio");
+const miniPlayer = document.getElementById("miniPlayer");
+const fullPlayer = document.getElementById("fullPlayer");
+const miniTitle = document.getElementById("miniTitle");
+const miniSub = document.getElementById("miniSub");
+const fullTitle = document.getElementById("fullTitle");
+const scrubFill = document.getElementById("scrubFill");
+const timeCurrent = document.getElementById("timeCurrent");
+const timeTotal = document.getElementById("timeTotal");
+const miniPlayBtn = document.getElementById("miniPlayBtn");
+const fullPlayBtn = document.getElementById("fullPlayBtn");
+const toastEl = document.getElementById("toast");
 
-// ======== LOAD AND PLAY ========
-function playVideo(url) {
-    video.src = url;
-    audio.src = url;
+let currentTrack = null;
+let progressTimer = null;
 
-    video.play();
-    audio.play();
-
-    playPauseBtn.textContent = "⏸";
-    startProgressLoop();
+// === TOAST ===
+function toast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  setTimeout(() => toastEl.classList.remove("show"), 2200);
 }
 
-// ======== SKIP CONTROLS ========
-function skipBack() {
-    audio.currentTime -= 10;
-    video.currentTime = audio.currentTime;
-}
-function skipForward() {
-    audio.currentTime += 10;
-    video.currentTime = audio.currentTime;
-}
-
-// ======== PLAY / PAUSE ========
-playPauseBtn.onclick = function () {
-    if (audio.paused) {
-        audio.play();
-        video.play();
-        playPauseBtn.textContent = "⏸";
-    } else {
-        audio.pause();
-        video.pause();
-        playPauseBtn.textContent = "▶";
-    }
-};
-
-// ======== PROGRESS BAR LOOP ========
-function startProgressLoop() {
-    setInterval(() => {
-        if (audio.duration) {
-            let percent = (audio.currentTime / audio.duration) * 100;
-            progress.style.width = percent + "%";
-            video.currentTime = audio.currentTime;
-        }
-    }, 300);
+// === FORMAT TIME ===
+function formatTime(sec) {
+  if (!sec || isNaN(sec)) return "0:00";
+  const s = Math.floor(sec);
+  const m = Math.floor(s / 60);
+  const r = s % 60;
+  return `${m}:${r.toString().padStart(2, "0")}`;
 }
 
-function seek(event) {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const percent = (event.clientX - rect.left) / rect.width;
-    audio.currentTime = percent * audio.duration;
-    video.currentTime = audio.currentTime;
-}
-
-// ======== VIDEO LIST ========
+// === LOAD LIST ===
 async function listVideos() {
-    const { data } = await db.from("videos").select("*").order("created_at", { ascending: false });
-    const list = document.getElementById("videoList");
+  const { data, error } = await db
+    .from("videos")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) {
+    toast("Error loading videos");
+    return;
+  }
 
-    list.innerHTML = "";
-    data.forEach(v => {
-        const div = document.createElement("div");
-        div.innerHTML = `
-            <strong>${v.title}</strong><br>
-            <button onclick="playVideo('${v.file_url}')">Play</button>
-        `;
-        list.appendChild(div);
-    });
+  const list = document.getElementById("videoList");
+  list.innerHTML = "";
+  if (!data || !data.length) {
+    list.innerHTML = `<div style="font-size:13px;color:var(--muted);">No videos yet. Upload one above.</div>`;
+    return;
+  }
+
+  data.forEach(row => {
+    const item = document.createElement("div");
+    item.className = "video-item";
+    item.innerHTML = `
+      <div>
+        <div class="video-title">${row.title}</div>
+        <div class="video-meta">${new Date(row.created_at).toLocaleString()}</div>
+      </div>
+      <button class="btn-ghost">Play</button>
+    `;
+    item.querySelector("button").onclick = () => startTrack(row);
+    list.appendChild(item);
+  });
 }
 listVideos();
 
-// ======== UPLOAD ========
-async function uploadVideo() {
-    const file = document.getElementById("fileInput").files[0];
-    if (!file) return alert("No file selected");
+// === START PLAYBACK ===
+async function startTrack(row) {
+  currentTrack = row;
+  miniTitle.textContent = row.title;
+  miniSub.textContent = "Playing from Supabase library";
+  fullTitle.textContent = row.title;
 
-    const ext = file.name.split(".").pop();
-    const fileName = crypto.randomUUID() + "." + ext;
+  audioEl.src = row.file_url;
+  videoEl.src = row.file_url; // muted visual only
+  videoEl.currentTime = 0;
+  audioEl.currentTime = 0;
 
-    const { error } = await db.storage.from("Storage").upload(fileName, file);
-    if (error) return alert("Upload failed");
+  try {
+    await audioEl.play();
+    videoEl.play().catch(() => {}); // video is muted, safe to ignore
+  } catch (e) {
+    toast("Tap again to allow playback");
+    return;
+  }
 
-    const { data: pub } = db.storage.from("Storage").getPublicUrl(fileName);
+  miniPlayer.style.display = "flex";
+  setPlayingUI(true);
 
-    await db.from("videos").insert({
-        title: file.name,
-        file_path: fileName,
-        file_url: pub.publicUrl,
-        source_url: "",
-        uploaded_by: null
+  // Media Session (lock screen)
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: row.title,
+      artist: "Muri Upload Test",
+      album: "Muri",
+      artwork: [
+        { src: row.file_url, sizes: "512x512", type: "image/png" }
+      ]
     });
+  }
 
-    alert("Upload OK!");
-    listVideos();
+  startProgressLoop();
 }
-</script>
 
+// === PLAY/PAUSE ===
+function setPlayingUI(playing) {
+  miniPlayBtn.textContent = playing ? "⏸" : "▶";
+  fullPlayBtn.textContent = playing ? "⏸" : "▶";
+}
+
+function togglePlay(ev) {
+  if (ev) ev.stopPropagation();
+  if (!currentTrack) return;
+
+  if (audioEl.paused) {
+    audioEl.play();
+    videoEl.play().catch(() => {});
+    setPlayingUI(true);
+  } else {
+    audioEl.pause();
+    videoEl.pause();
+    setPlayingUI(false);
+  }
+}
+
+// === SEEK ===
+function seekRelative(delta) {
+  if (!currentTrack || !audioEl.duration) return;
+  let t = audioEl.currentTime + delta;
+  t = Math.max(0, Math.min(t, audioEl.duration));
+  audioEl.currentTime = t;
+  videoEl.currentTime = t;
+}
+
+function scrub(e) {
+  if (!currentTrack || !audioEl.duration) return;
+  const bar = e.currentTarget.querySelector(".scrub-track");
+  const rect = bar.getBoundingClientRect();
+  const percent = (e.clientX - rect.left) / rect.width;
+  const t = Math.max(0, Math.min(percent, 1)) * audioEl.duration;
+  audioEl.currentTime = t;
+  videoEl.currentTime = t;
+}
+
+// === PROGRESS LOOP ===
+function startProgressLoop() {
+  if (progressTimer) clearInterval(progressTimer);
+  progressTimer = setInterval(() => {
+    if (!audioEl.duration) return;
+    const p = (audioEl.currentTime / audioEl.duration) * 100;
+    scrubFill.style.width = `${p}%`;
+    timeCurrent.textContent = formatTime(audioEl.currentTime);
+    timeTotal.textContent = formatTime(audioEl.duration);
+    videoEl.currentTime = audioEl.currentTime;
+  }, 250);
+}
+
+// === FULL PLAYER ===
+function openFullPlayer() {
+  if (!currentTrack) return;
+  fullPlayer.style.display = "flex";
+  videoEl.play().catch(() => {});
+}
+function closeFullPlayer() {
+  fullPlayer.style.display = "none";
+  videoEl.pause(); // audio keeps going
+}
+
+// optional native fullscreen if available
+function enterNativeFullscreen() {
+  if (videoEl.requestFullscreen) videoEl.requestFullscreen();
+}
+
+// === UPLOAD ===
+async function uploadVideo() {
+  const file = document.getElementById("fileInput").files[0];
+  if (!file) {
+    toast("No file selected");
+    return;
+  }
+
+  const ext = file.name.split(".").pop();
+  const fileName = `${crypto.randomUUID()}.${ext}`;
+
+  document.getElementById("uploadStatus").textContent = "Uploading...";
+
+  const { error: upErr } = await db.storage.from("Storage").upload(fileName, file);
+  if (upErr) {
+    console.error(upErr);
+    toast("Upload failed");
+    document.getElementById("uploadStatus").textContent = "";
+    return;
+  }
+
+  const { data: pub } = db.storage.from("Storage").getPublicUrl(fileName);
+
+  const { error: insErr } = await db.from("videos").insert({
+    title: file.name,
+    file_path: fileName,
+    file_url: pub.publicUrl,
+    source_url: "",
+    uploaded_by: null
+  });
+
+  if (insErr) {
+    console.error(insErr);
+    toast("DB insert failed");
+    document.getElementById("uploadStatus").textContent = "";
+    return;
+  }
+
+  document.getElementById("uploadStatus").textContent = "Uploaded!";
+  toast("Upload complete");
+  listVideos();
+}
+
+</script>
 </body>
 </html>
