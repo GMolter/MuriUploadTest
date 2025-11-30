@@ -1,121 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Muri Backend Test</title>
+<meta charset="UTF-8" />
+<title>Muri Upload Test — Pretty UI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<!-- GOOGLE FONTS -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<!-- ICONS -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
 <style>
+    :root {
+        --bg: #f5f5fb;
+        --fg: #111;
+        --card: rgba(255,255,255,0.8);
+        --glass: rgba(255,255,255,0.6);
+        --border: rgba(0,0,0,0.1);
+        --primary: #6366f1;
+        --primary-hover: #4f46e5;
+    }
+
+    body.dark {
+        --bg: #0b1120;
+        --fg: #fff;
+        --card: rgba(20,20,30,0.6);
+        --glass: rgba(20,20,30,0.4);
+        --border: rgba(255,255,255,0.1);
+    }
+
     body {
-        background: #f5f5f7;
-        font-family: Arial, sans-serif;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: "Inter", sans-serif;
+        margin: 0;
         padding: 20px;
-        max-width: 700px;
-        margin: auto;
-        color: #333;
-    }<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Muri Backend Test</title>
-<style>
-    body {
-        background: #f5f5f7;
-        font-family: Arial, sans-serif;
-        padding: 20px;
-        max-width: 700px;
-        margin: auto;
-        color: #333;
+        transition: background 0.3s, color 0.3s;
     }
-    h1, h2 {
-        margin-top: 30px;
-        color: #222;
+
+    h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 10px;
     }
-    input, button {
-        padding: 10px;
-        margin: 6px 0;
-        width: 100%;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-    }
+
     button {
-        background: #6366f1;
-        color: white;
-        cursor: pointer;
+        background: var(--primary);
+        color: #fff;
+        padding: 12px 16px;
         border: none;
-    }
-    button:hover {
-        background: #4f46e5;
-    }
-    #videoList div {
-        padding: 10px;
-        background: #fff;
-        border-radius: 8px;
+        border-radius: 10px;
+        font-size: 15px;
         margin-top: 10px;
-        border: 1px solid #ddd;
+        width: 100%;
+        cursor: pointer;
+        transition: background 0.2s;
     }
+
+    button:hover { background: var(--primary-hover); }
+
+    hr { border: none; border-bottom: 1px solid var(--border); margin: 30px 0; }
+
+    /* GLASS PANEL */
+    .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    /* MODAL */
+    .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+        background: var(--card);
+        padding: 25px;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        animation: fadeUp 0.25s ease;
+    }
+
+    @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    input {
+        padding: 12px;
+        font-size: 15px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        width: 100%;
+        margin-top: 10px;
+        background: var(--glass);
+        color: var(--fg);
+    }
+
+    #videoList .item {
+        background: var(--card);
+        padding: 12px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        border: 1px solid var(--border);
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    #player {
+        width: 100%;
+        border-radius: 12px;
+        margin-top: 20px;
+    }
+
+    /* TOAST */
+    #toast {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--fg);
+        color: var(--bg);
+        padding: 14px 18px;
+        border-radius: 12px;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s, transform 0.3s;
+        transform: translateY(20px);
+    }
+
+    #toast.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
 </style>
 </head>
 <body>
 
-<h1>Muri Backend Test</h1>
-<p>This page lets you test Supabase Auth, video uploads, table inserts, and playback.</p>
+<h1>Muri Backend Playground</h1>
+<button onclick="openLogin()">Login / Signup</button>
+<button onclick="toggleTheme()">Toggle Dark Mode</button>
 
-<hr>
+<div id="authStatus" style="margin-top:10px;color:var(--primary);font-weight:600;">Checking auth...</div>
 
-<!-- AUTH SECTION -->
-<h2>Login / Signup</h2>
+<div class="card">
+    <h2>Upload a Video</h2>
+    <input type="file" id="fileInput" accept="video/*">
+    <button onclick="uploadVideo()">Upload</button>
+    <p id="uploadStatus"></p>
+</div>
 
-<input id="email" type="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
+<div class="card">
+    <h2>Uploaded Videos</h2>
+    <div id="videoList"></div>
+</div>
 
-<button onclick="signup()">Sign Up</button>
-<button onclick="login()">Log In</button>
-<button onclick="logout()">Log Out</button>
-
-<p id="authStatus">Checking...</p>
-
-<hr>
-
-<!-- UPLOAD SECTION -->
-<h2>Upload Video</h2>
-<input type="file" id="fileInput" accept="video/*">
-<button onclick="uploadVideo()">Upload</button>
-
-<p id="uploadStatus"></p>
-
-<hr>
-
-<!-- VIDEO LIST -->
-<h2>Uploaded Videos</h2>
-<div id="videoList"></div>
-
-<!-- PLAYER -->
 <h2>Player</h2>
-<video id="player" width="100%" controls></video>
+<video id="player" controls></video>
+
+<div id="toast"></div>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+    <div class="modal-content">
+        <h2 style="margin-top:0;">Login / Signup</h2>
+        <input id="email" type="email" placeholder="Email">
+        <input id="password" type="password" placeholder="Password">
+        <button onclick="signup()">Sign Up</button>
+        <button onclick="login()">Log In</button>
+        <button onclick="closeLogin()" style="background:#aaa;">Cancel</button>
+    </div>
+</div>
 
 <!-- SUPABASE CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
-// -----------------------------------------
-// 1. CONFIG — your real Supabase credentials
-// -----------------------------------------
+// =========================================
+// CONFIG
+// =========================================
 const SUPABASE_URL = "https://azkthlaezuqiuidokqwy.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6a3RobGFlenVxaXVpZG9rcXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NzQ1NTMsImV4cCI6MjA4MDA1MDU1M30.-ddzglqIhff6UVujsQbgmpESTrHsXLww7AZ_fcEdLHg";
 
-// FIX: rename "supabase" → "db"
 const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// -----------------------------------------
-// 2. AUTHENTICATION
-// -----------------------------------------
+// =========================================
+// UI HELPERS
+// =========================================
+function toast(msg) {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 3000);
+}
+
+function openLogin() {
+    document.getElementById("loginModal").classList.add("active");
+}
+
+function closeLogin() {
+    document.getElementById("loginModal").classList.remove("active");
+}
+
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    toast("Theme toggled");
+}
+
+// =========================================
+// AUTH
+// =========================================
 async function signup() {
     let email = document.getElementById("email").value;
     let password = document.getElementById("password").value;
 
     const { error } = await db.auth.signUp({ email, password });
-    if (error) alert(error.message);
-    else alert("Signup successful!");
+    if (error) toast(error.message);
+    else toast("Signup successful!");
 }
 
 async function login() {
@@ -123,14 +239,12 @@ async function login() {
     let password = document.getElementById("password").value;
 
     const { error } = await db.auth.signInWithPassword({ email, password });
-    if (error) alert(error.message);
-    else alert("Login successful!");
-    updateAuthStatus();
-}
-
-async function logout() {
-    await db.auth.signOut();
-    updateAuthStatus();
+    if (error) toast(error.message);
+    else {
+        toast("Login successful!");
+        closeLogin();
+        updateAuthStatus();
+    }
 }
 
 async function updateAuthStatus() {
@@ -140,85 +254,55 @@ async function updateAuthStatus() {
 }
 updateAuthStatus();
 
-// -----------------------------------------
-// 3. UPLOAD VIDEO TO SUPABASE STORAGE
-// -----------------------------------------
+// =========================================
+// UPLOAD
+// =========================================
 async function uploadVideo() {
     const file = document.getElementById("fileInput").files[0];
-    if (!file) {
-        alert("No file selected.");
-        return;
-    }
+    if (!file) return toast("No file selected.");
 
-    // Try to detect logged-in user
     const { data } = await db.auth.getUser();
-    const user = data.user;
-    const uploaded_by = user ? user.id : null;
+    const uploaded_by = data.user ? data.user.id : null;
 
-    // Make unique filename
     const ext = file.name.split(".").pop();
     const fileName = `${crypto.randomUUID()}.${ext}`;
 
-    // Upload to your bucket "Storage"
-    const { error: uploadError } = await db.storage
-        .from("Storage")
-        .upload(fileName, file);
+    const { error: uploadError } = await db.storage.from("Storage").upload(fileName, file);
+    if (uploadError) return toast("Upload failed!");
 
-    if (uploadError) {
-        alert("Upload failed!");
-        console.log(uploadError);
-        return;
-    }
-
-    // Public URL
     const { data: pub } = db.storage.from("Storage").getPublicUrl(fileName);
-
     const file_url = pub.publicUrl;
 
-    // Insert video metadata into the videos table
-    const { error: insertError } = await db
-        .from("videos")
-        .insert([
-            {
-                title: file.name,
-                file_path: fileName,
-                file_url,
-                source_url: "",
-                uploaded_by,
-            }
-        ]);
+    const { error: insertError } = await db.from("videos").insert({
+        title: file.name,
+        file_path: fileName,
+        file_url,
+        source_url: "",
+        uploaded_by
+    });
 
-    if (insertError) {
-        alert("Database insert failed!");
-        console.log(insertError);
-        return;
-    }
+    if (insertError) return toast("Database error!");
 
-    document.getElementById("uploadStatus").innerText = "Upload successful!";
-    listVideos(); // refresh list
+    toast("Uploaded successfully!");
+    listVideos();
 }
 
-// -----------------------------------------
-// 4. FETCH AND DISPLAY VIDEOS
-// -----------------------------------------
+// =========================================
+// LOAD VIDEOS
+// =========================================
 async function listVideos() {
-    const { data, error } = await db
-        .from("videos")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-    if (error) {
-        alert("Error fetching videos.");
-        return;
-    }
+    const { data, error } = await db.from("videos").select("*").order("created_at", { ascending: false });
 
     const list = document.getElementById("videoList");
     list.innerHTML = "";
 
+    if (!data) return;
+
     data.forEach(video => {
         const div = document.createElement("div");
+        div.className = "item";
         div.innerHTML = `
-            <strong>${video.title}</strong><br>
+            <strong>${video.title}</strong>
             <button onclick="playVideo('${video.file_url}')">Play</button>
         `;
         list.appendChild(div);
@@ -226,224 +310,9 @@ async function listVideos() {
 }
 listVideos();
 
-// -----------------------------------------
-// 5. PLAY VIDEO
-// -----------------------------------------
-function playVideo(url) {
-    const player = document.getElementById("player");
-    player.src = url;
-    player.play();
-}
-
-</script>
-</body>
-</html>
-
-    h1, h2 {
-        margin-top: 30px;
-        color: #222;
-    }
-    input, button {
-        padding: 10px;
-        margin: 6px 0;
-        width: 100%;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        font-size: 14px;
-    }
-    button {
-        background: #6366f1;
-        color: white;
-        cursor: pointer;
-        border: none;
-    }
-    button:hover {
-        background: #4f46e5;
-    }
-    #videoList div {
-        padding: 10px;
-        background: #fff;
-        border-radius: 8px;
-        margin-top: 10px;
-        border: 1px solid #ddd;
-    }
-</style>
-</head>
-<body>
-
-<h1>Muri Backend Test</h1>
-<p>This page lets you test Supabase Auth, video uploads, table inserts, and playback.</p>
-
-<hr>
-
-<!-- AUTH SECTION -->
-<h2>Login / Signup</h2>
-
-<input id="email" type="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-
-<button onclick="signup()">Sign Up</button>
-<button onclick="login()">Log In</button>
-<button onclick="logout()">Log Out</button>
-
-<p id="authStatus">Checking...</p>
-
-<hr>
-
-<!-- UPLOAD SECTION -->
-<h2>Upload Video</h2>
-<input type="file" id="fileInput" accept="video/*">
-<button onclick="uploadVideo()">Upload</button>
-
-<p id="uploadStatus"></p>
-
-<hr>
-
-<!-- VIDEO LIST -->
-<h2>Uploaded Videos</h2>
-<div id="videoList"></div>
-
-<!-- PLAYER -->
-<h2>Player</h2>
-<video id="player" width="100%" controls></video>
-
-<!-- SUPABASE CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-// -----------------------------------------
-// 1. CONFIG — your real Supabase credentials
-// -----------------------------------------
-const SUPABASE_URL = "https://azkthlaezuqiuidokqwy.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6a3RobGFlenVxaXVpZG9rcXd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ0NzQ1NTMsImV4cCI6MjA4MDA1MDU1M30.-ddzglqIhff6UVujsQbgmpESTrHsXLww7AZ_fcEdLHg";
-
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// -----------------------------------------
-// 2. AUTHENTICATION
-// -----------------------------------------
-async function signup() {
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
-
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) alert(error.message);
-    else alert("Signup successful!");
-}
-
-async function login() {
-    let email = document.getElementById("email").value;
-    let password = document.getElementById("password").value;
-
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) alert(error.message);
-    else alert("Login successful!");
-    updateAuthStatus();
-}
-
-async function logout() {
-    await supabase.auth.signOut();
-    updateAuthStatus();
-}
-
-async function updateAuthStatus() {
-    const { data } = await supabase.auth.getUser();
-    document.getElementById("authStatus").innerText =
-        data.user ? `Logged in as: ${data.user.email}` : "Not logged in";
-}
-updateAuthStatus();
-
-// -----------------------------------------
-// 3. UPLOAD VIDEO TO SUPABASE STORAGE
-// -----------------------------------------
-async function uploadVideo() {
-    const file = document.getElementById("fileInput").files[0];
-    if (!file) {
-        alert("No file selected.");
-        return;
-    }
-
-    // Try to detect logged-in user
-    const { data } = await supabase.auth.getUser();
-    const user = data.user;
-    const uploaded_by = user ? user.id : null;
-
-    // Make unique filename
-    const ext = file.name.split(".").pop();
-    const fileName = `${crypto.randomUUID()}.${ext}`;
-
-    // Upload to your bucket "Storage"
-    const { error: uploadError } = await supabase.storage
-        .from("Storage")
-        .upload(fileName, file);
-
-    if (uploadError) {
-        alert("Upload failed!");
-        console.log(uploadError);
-        return;
-    }
-
-    // Public URL
-    const { data: pub } = supabase.storage
-        .from("Storage")
-        .getPublicUrl(fileName);
-
-    const file_url = pub.publicUrl;
-
-    // Insert video metadata into the videos table
-    const { error: insertError } = await supabase
-        .from("videos")
-        .insert([
-            {
-                title: file.name,
-                file_path: fileName,
-                file_url,
-                source_url: "",  // no YT link for this test
-                uploaded_by,
-            }
-        ]);
-
-    if (insertError) {
-        alert("Database insert failed!");
-        console.log(insertError);
-        return;
-    }
-
-    document.getElementById("uploadStatus").innerText = "Upload successful!";
-    listVideos(); // refresh list
-}
-
-// -----------------------------------------
-// 4. FETCH AND DISPLAY VIDEOS
-// -----------------------------------------
-async function listVideos() {
-    const { data, error } = await supabase
-        .from("videos")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-    if (error) {
-        alert("Error fetching videos.");
-        return;
-    }
-
-    const list = document.getElementById("videoList");
-    list.innerHTML = "";
-
-    data.forEach(video => {
-        const div = document.createElement("div");
-        div.innerHTML = `
-            <strong>${video.title}</strong><br>
-            <button onclick="playVideo('${video.file_url}')">Play</button>
-        `;
-        list.appendChild(div);
-    });
-}
-listVideos();
-
-// -----------------------------------------
-// 5. PLAY VIDEO
-// -----------------------------------------
+// =========================================
+// VIDEO PLAYER
+// =========================================
 function playVideo(url) {
     const player = document.getElementById("player");
     player.src = url;
