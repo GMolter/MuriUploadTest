@@ -514,7 +514,11 @@ h1 {
         <div class="drop-title">Drop files or click to upload</div>
         <div class="drop-sub">Select audio / video files from your device</div>
         <button class="btn-primary" type="button" onclick="document.getElementById('fileInput').click()">Choose File</button>
-        <input id="fileInput" type="file" accept="video/*,audio/*" style="display:none" />
+       <input id="fileInput" type="file"
+       accept="video/*,audio/*"
+       style="display:none"
+       onchange="uploadVideo()" />
+
       </div>
       <p id="uploadStatus" style="font-size:12px;margin-top:8px;color:var(--muted);"></p>
     </section>
